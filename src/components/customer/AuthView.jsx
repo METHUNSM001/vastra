@@ -304,6 +304,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                   <Mail size={18} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                   <input
                     type="email"
+                    className="auth-icon-input"
                     required
                     placeholder="Enter your email address"
                     value={loginEmail}
@@ -336,6 +337,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                   <Lock size={18} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                   <input
                     type={showPassword ? "text" : "password"}
+                    className="auth-icon-input"
                     required
                     placeholder="••••••••"
                     value={loginPassword}

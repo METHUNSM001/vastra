@@ -451,6 +451,11 @@
     outline-offset: 2px !important;
   }
 
+  .auth-icon-input {
+    padding-left: 48px !important;
+    padding-right: 48px !important;
+  }
+
   /* Larger touch targets */
   button, a[role="button"] {
     min-width: 44px !important;
