@@ -1,0 +1,462 @@
+/* ========================================================================
+   MOBILE-OPTIMIZED APP STYLES - Vastra Lakshnam
+   ======================================================================== */
+
+/* *** HEADER MOBILE OPTIMIZATION *** */
+.category-subnav {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  .mobile-menu-btn {
+    display: block !important;
+  }
+
+  .hide-on-mobile-header {
+    display: none !important;
+  }
+
+  .brand-logo-tagline {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-menu-btn {
+    display: none !important;
+  }
+
+  .hide-on-mobile-header {
+    display: inline-flex !important;
+  }
+
+  .brand-logo-tagline {
+    display: block !important;
+  }
+}
+
+/* Mobile logo sizing */
+@media (max-width: 768px) {
+  .brand-logo-text {
+    font-size: 1.2rem !important;
+  }
+
+  .brand-logo-tagline {
+    display: none !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .brand-logo-text {
+    font-size: 1rem !important;
+  }
+}
+
+/* Hide desktop text on mobile */
+.desktop-only-text {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .desktop-only-text {
+    display: inline;
+  }
+}
+
+/* *** HERO SECTION MOBILE OPTIMIZATION *** */
+@media (max-width: 768px) {
+  .hero-card {
+    min-height: 300px !important;
+    border-radius: var(--radius-lg) !important;
+    display: block !important;
+  }
+
+  .hero-bg-image {
+    width: 100% !important;
+    position: absolute !important;
+    inset: 0 !important;
+    height: 100% !important;
+    opacity: 0.18;
+  }
+
+  .hero-gradient-overlay {
+    background: linear-gradient(180deg, rgba(250, 248, 245, 0.6) 0%, rgba(250, 248, 245, 0.8) 100%) !important;
+  }
+
+  .hero-content {
+    padding: 20px 16px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .hero-action-buttons {
+    gap: 8px !important;
+    width: 100%;
+  }
+
+  .hero-action-buttons button,
+  .hero-action-buttons a {
+    flex: 1;
+    min-width: 120px;
+    font-size: 0.8rem !important;
+    padding: 10px 12px !important;
+  }
+
+  .hero-guarantee {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 20px !important;
+    padding-top: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-card {
+    min-height: 280px !important;
+  }
+
+  .hero-bg-image {
+    height: 100% !important;
+  }
+
+  .hero-content {
+    padding: 16px 12px !important;
+  }
+
+  .hero-action-buttons {
+    flex-direction: column;
+    gap: 8px !important;
+  }
+
+  .hero-action-buttons button,
+  .hero-action-buttons a {
+    width: 100% !important;
+    flex: unset;
+  }
+}
+
+/* *** PRODUCT GRID OPTIMIZATION *** */
+@media (max-width: 768px) {
+  /* Force 2-column grid on mobile */
+  [style*="grid-template-columns"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .product-card {
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .product-card img {
+    height: auto !important;
+    aspect-ratio: 3/4;
+  }
+}
+
+@media (max-width: 480px) {
+  [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* *** CATEGORY SECTION MOBILE *** */
+@media (max-width: 768px) {
+  .category-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .category-card {
+    aspect-ratio: 1;
+    border-radius: var(--radius-md) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .category-card {
+    border-radius: var(--radius-sm) !important;
+  }
+}
+
+/* *** CARD & SECTION SPACING *** */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 16px !important;
+  }
+
+  .card {
+    border-radius: var(--radius-md) !important;
+    padding: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.2rem !important;
+  }
+
+  .card {
+    border-radius: var(--radius-sm) !important;
+    padding: 12px !important;
+  }
+}
+
+/* *** FORM ELEMENTS MOBILE OPTIMIZATION *** */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important;
+    min-height: 44px !important;
+    padding: 12px 14px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  label {
+    font-size: 0.95rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .form-group {
+    margin-bottom: 16px !important;
+  }
+}
+
+/* *** MODAL & DRAWER MOBILE *** */
+@media (max-width: 768px) {
+  dialog, .modal, .drawer {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+    max-height: 90vh !important;
+  }
+
+  .modal-content, .drawer-content {
+    max-height: calc(90vh - 60px) !important;
+    overflow-y: auto !important;
+  }
+
+  .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+  }
+}
+
+/* *** FOOTER MOBILE *** */
+@media (max-width: 768px) {
+  footer {
+    padding: 24px 14px !important;
+  }
+
+  .footer-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .footer-section {
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 16px;
+  }
+
+  .footer-section:last-child {
+    border-bottom: none;
+  }
+}
+
+/* *** CAROUSEL/SLIDER MOBILE *** */
+@media (max-width: 768px) {
+  .carousel-nav {
+    display: none !important;
+  }
+
+  .carousel-dots {
+    position: absolute !important;
+    bottom: 12px !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+    display: flex !important;
+    gap: 4px !important;
+  }
+
+  .carousel-dot {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+  }
+}
+
+/* *** PAYMENT & CHECKOUT MOBILE *** */
+@media (max-width: 768px) {
+  .checkout-container {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .checkout-form, .order-summary {
+    width: 100% !important;
+  }
+
+  .order-summary {
+    position: sticky !important;
+    bottom: 0 !important;
+    background: white !important;
+    border-top: 1px solid var(--border-medium);
+    padding: 16px !important;
+    z-index: 10;
+  }
+}
+
+/* *** BREADCRUMB MOBILE *** */
+@media (max-width: 768px) {
+  .breadcrumb {
+    display: none !important;
+  }
+
+  .breadcrumb.mobile-visible {
+    display: block !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 12px !important;
+  }
+}
+
+/* *** FILTER & SIDEBAR MOBILE *** */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed !important;
+    left: -100% !important;
+    top: 0 !important;
+    width: 80% !important;
+    height: 100vh !important;
+    background: white !important;
+    z-index: 999 !important;
+    overflow-y: auto !important;
+    transition: left 0.3s ease !important;
+  }
+
+  .sidebar.open {
+    left: 0 !important;
+  }
+
+  .filter-toggle-btn {
+    display: inline-flex !important;
+  }
+
+  .main-content {
+    width: 100% !important;
+  }
+}
+
+/* *** TEXT TRUNCATION & ELLIPSIS *** */
+@media (max-width: 768px) {
+  .truncate-mobile {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .line-clamp-2-mobile {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+}
+
+/* *** SAFE AREA INSETS *** */
+@media (max-width: 768px) {
+  .app-root {
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+
+  .sticky-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 16px) !important;
+  }
+
+  .full-width-mobile {
+    width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+  }
+}
+
+/* *** SWIPE & GESTURE OPTIMIZATION *** */
+@media (max-width: 768px) {
+  /* Improve scroll performance */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Remove hover effects on touch */
+  .mobile-no-hover:hover {
+    background-color: inherit !important;
+    transform: none !important;
+  }
+}
+
+/* *** LANDSCAPE MODE ADJUSTMENTS *** */
+@media (max-width: 768px) and (orientation: landscape) {
+  :root {
+    --header-height: 44px !important;
+    --bottom-nav-height: 44px !important;
+  }
+
+  section {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .hero-card {
+    min-height: 280px !important;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* *** LOADING & SKELETON STATES *** */
+@media (max-width: 768px) {
+  .skeleton {
+    height: 16px !important;
+    border-radius: var(--radius-xs) !important;
+  }
+
+  .skeleton-card {
+    border-radius: var(--radius-sm) !important;
+  }
+}
+
+/* *** ACCESSIBILITY & FOCUS STATES *** */
+@media (max-width: 768px) {
+  button:focus-visible, 
+  a:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--brand-primary) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Larger touch targets */
+  button, a[role="button"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}

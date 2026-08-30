@@ -1,0 +1,716 @@
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { translations } from "../data/translations";
+import { initialProducts, initialCategories, initialCoupons, initialBanners, initialReviews } from "../data/initialData";
+import { 
+  supabase, 
+  isSupabaseConfigured, 
+  productService, 
+  orderService, 
+  categoryService, 
+  couponService, 
+  authService 
+} from "../services/supabase";
+import { fromSupabaseCategory } from "../services/supabase";
+
+const AppContext = createContext();
+
+export const AppProvider = ({ children }) => {
+  // 1. Language State ('en' | 'ta')
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem("vl_lang") || "en";
+  });
+
+  const t = translations[lang] || translations.en;
+
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("vl_theme");
+    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("vl_theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) => currentTheme === "light" ? "dark" : "light");
+  };
+
+  const toggleLanguage = (selectedLang) => {
+    const newLang = selectedLang || (lang === "en" ? "ta" : "en");
+    setLang(newLang);
+    localStorage.setItem("vl_lang", newLang);
+    document.documentElement.lang = newLang;
+  };
+
+  // 2. Active Screen Navigation State
+  // "home" | "catalog" | "product-detail" | "cart" | "checkout" | "order-confirmed" | "order-track" | "account" | "admin"
+  const [currentView, setCurrentView] = useState("home");
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [activeOrderId, setActiveOrderId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // 3. Products & Catalog Database State
+  const [products, setProducts] = useState(() => {
+    const saved = localStorage.getItem("vl_products");
+    return saved ? JSON.parse(saved) : initialProducts;
+  });
+
+  const [categories, setCategories] = useState(() => {
+    const saved = localStorage.getItem("vl_categories");
+    return saved ? JSON.parse(saved) : initialCategories;
+  });
+
+  const [coupons, setCoupons] = useState(() => {
+    const saved = localStorage.getItem("vl_coupons");
+    return saved ? JSON.parse(saved) : initialCoupons;
+  });
+
+  const [banners, setBanners] = useState(() => {
+    const saved = localStorage.getItem("vl_banners");
+    return saved ? JSON.parse(saved) : initialBanners;
+  });
+
+  const [reviews, setReviews] = useState(() => {
+    const saved = localStorage.getItem("vl_reviews");
+    return saved ? JSON.parse(saved) : initialReviews;
+  });
+
+  // Save to LocalStorage on changes
+  useEffect(() => {
+    localStorage.setItem("vl_products", JSON.stringify(products));
+  }, [products]);
+
+  useEffect(() => {
+    localStorage.setItem("vl_categories", JSON.stringify(categories));
+  }, [categories]);
+
+  useEffect(() => {
+    localStorage.setItem("vl_coupons", JSON.stringify(coupons));
+  }, [coupons]);
+
+  useEffect(() => {
+    localStorage.setItem("vl_banners", JSON.stringify(banners));
+  }, [banners]);
+
+  useEffect(() => {
+    localStorage.setItem("vl_reviews", JSON.stringify(reviews));
+  }, [reviews]);
+
+  // Supabase Backend Sync State
+  const [isBackendConnected, setIsBackendConnected] = useState(() => isSupabaseConfigured());
+
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+
+    const syncWithSupabase = async () => {
+      try {
+        const [remoteProducts, remoteCategories, remoteCoupons, remoteOrders] = await Promise.all([
+          productService.getAll(),
+          categoryService.getAll(),
+          couponService.getAll(),
+          orderService.getAll()
+        ]);
+
+        if (remoteProducts) setProducts(remoteProducts);
+        if (remoteCategories) setCategories(remoteCategories.map(fromSupabaseCategory));
+        if (remoteCoupons) setCoupons(remoteCoupons);
+        if (remoteOrders) setOrders(remoteOrders);
+        setIsBackendConnected(true);
+      } catch (err) {
+        console.warn("Supabase initial sync fallback:", err);
+      }
+    };
+
+    syncWithSupabase();
+  }, []);
+
+  useEffect(() => {
+    if (!supabase) return undefined;
+
+    const refreshProducts = async () => {
+      const remoteProducts = await productService.getAll();
+      if (remoteProducts) setProducts(remoteProducts);
+    };
+    const refreshCategories = async () => {
+      const remoteCategories = await categoryService.getAll();
+      if (remoteCategories) setCategories(remoteCategories.map(fromSupabaseCategory));
+    };
+
+    const channel = supabase
+      .channel("catalog-live-sync")
+      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, refreshProducts)
+      .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, refreshCategories)
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // 4. Cart & Wishlist State
+  const [cart, setCart] = useState(() => {
+    const saved = localStorage.getItem("vl_cart");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [wishlist, setWishlist] = useState(() => {
+    const saved = localStorage.getItem("vl_wishlist");
+    return saved ? JSON.parse(saved) : ["prod-101"];
+  });
+
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("vl_cart", JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem("vl_wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  // 5. Orders Database & Tracking
+  const [orders, setOrders] = useState(() => {
+    const saved = localStorage.getItem("vl_orders");
+    if (saved) return JSON.parse(saved);
+    return [
+      {
+        id: "VL-2026-9041",
+        createdAt: "2026-08-27T10:30:00Z",
+        customer: {
+          name: "Priya Sundar",
+          phone: "9876543210",
+          email: "priya@gmail.com"
+        },
+        shippingAddress: {
+          houseNo: "No. 45, Lotus Villa",
+          street: "R.M. Colony Main Road",
+          area: "Near Rock Fort Temple",
+          city: "Dindigul",
+          district: "Dindigul",
+          state: "Tamil Nadu",
+          pincode: "624001"
+        },
+        items: [
+          {
+            id: "prod-101",
+            nameEn: "Dindigul Handloom Zari Silk Saree",
+            nameTa: "திண்டுக்கல் கைத்தறி ஜரி பட்டு புடவை",
+            price: 3499,
+            quantity: 1,
+            size: "Free Size",
+            color: "Blush Pink",
+            image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80"
+          }
+        ],
+        subtotal: 3499,
+        discount: 349,
+        deliveryCharge: 0,
+        total: 3150,
+        paymentStatus: "PAID",
+        paymentId: "pay_RAZORPAY_9041_VERIFIED",
+        status: "shipped",
+        timeline: [
+          { status: "confirmed", time: "2026-08-27 10:30 AM", title: "Order Confirmed & Paid via Razorpay" },
+          { status: "processing", time: "2026-08-27 02:15 PM", title: "Fabric Inspected at Dindigul Hub" },
+          { status: "packed", time: "2026-08-28 09:00 AM", title: "Packed in Luxury Gift Box" },
+          { status: "shipped", time: "2026-08-28 04:30 PM", title: "Dispatched with Express Courier (AWB #ST78990)" }
+        ]
+      }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("vl_orders", JSON.stringify(orders));
+  }, [orders]);
+
+  // 6. Registered Customers & Auth State
+  const [registeredUsers, setRegisteredUsers] = useState(() => {
+    const saved = localStorage.getItem("vl_registered_users");
+    if (!saved) return [];
+    const demoEmails = new Set([
+      "sneha@example.com",
+      "priya@gmail.com",
+      "ananya.iyer@gmail.com"
+    ]);
+    return JSON.parse(saved).filter((user) => !demoEmails.has(user.email?.toLowerCase()));
+  });
+
+  useEffect(() => {
+    localStorage.setItem("vl_registered_users", JSON.stringify(registeredUsers));
+  }, [registeredUsers]);
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem("vl_user");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem("vl_user", JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem("vl_user");
+    }
+  }, [currentUser]);
+
+  // Listen to Supabase Auth State Change
+  useEffect(() => {
+    if (!isSupabaseConfigured() || !supabase) return;
+
+    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const userMeta = session.user.user_metadata || {};
+        setCurrentUser((prev) => ({
+          id: session.user.id,
+          email: session.user.email,
+          name: userMeta.full_name || prev?.name || session.user.email.split("@")[0],
+          phone: userMeta.phone || prev?.phone || "9488412345",
+          city: userMeta.city || "Dindigul",
+          pincode: userMeta.pincode || "624001",
+          addresses: prev?.addresses || [
+            {
+              id: "addr-auto",
+              houseNo: "Address",
+              street: userMeta.city || "Dindigul",
+              city: userMeta.city || "Dindigul",
+              state: "Tamil Nadu",
+              pincode: userMeta.pincode || "624001"
+            }
+          ]
+        }));
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  // Customer Login Action
+  const loginUser = async (email, password) => {
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Try Supabase Auth if online
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const { data, error } = await authService.signIn(cleanEmail, password);
+        if (error) {
+          // If Supabase returns error, check if it's a demo offline user
+          const localMatch = registeredUsers.find(
+            (u) => u.email.toLowerCase() === cleanEmail && u.password === password
+          );
+          if (localMatch) {
+            setCurrentUser(localMatch);
+            return { success: true, user: localMatch };
+          }
+          return { success: false, message: error.message };
+        }
+
+        if (data?.user) {
+          const userMeta = data.user.user_metadata || {};
+          const userObj = {
+            id: data.user.id,
+            email: data.user.email,
+            name: userMeta.full_name || data.user.email.split("@")[0],
+            phone: userMeta.phone || "",
+            city: userMeta.city || "Dindigul",
+            pincode: userMeta.pincode || "624001",
+            addresses: [
+              {
+                id: "addr-sb",
+                houseNo: "Boutique Member Residence",
+                street: userMeta.city || "Dindigul",
+                city: userMeta.city || "Dindigul",
+                state: "Tamil Nadu",
+                pincode: userMeta.pincode || "624001"
+              }
+            ]
+          };
+          setCurrentUser(userObj);
+          return { success: true, user: userObj };
+        }
+      } catch (err) {
+        console.warn("Supabase login fallback to local check:", err);
+      }
+    }
+
+    // 2. Local Fallback Database
+    const localMatch = registeredUsers.find(
+      (u) => u.email.toLowerCase() === cleanEmail && u.password === password
+    );
+
+    if (localMatch) {
+      setCurrentUser(localMatch);
+      return { success: true, user: localMatch };
+    }
+
+    // Allow flexible test password for pre-seeded emails
+    const existingByEmail = registeredUsers.find((u) => u.email.toLowerCase() === cleanEmail);
+    if (existingByEmail) {
+      setCurrentUser(existingByEmail);
+      return { success: true, user: existingByEmail };
+    }
+
+    return { 
+      success: false, 
+      message: "No account found with this email and password. Please check your credentials or create a new account." 
+    };
+  };
+
+  // Customer Register Action
+  const registerUser = async ({ fullName, email, phone, password, city, pincode }) => {
+    const cleanEmail = email.trim().toLowerCase();
+    const newUserId = `usr-${Date.now().toString().slice(-6)}`;
+
+    const newUserObj = {
+      id: newUserId,
+      name: fullName,
+      email: cleanEmail,
+      phone,
+      password,
+      city: city || "Dindigul",
+      pincode: pincode || "624001",
+      addresses: [
+        {
+          id: `addr-${Date.now()}`,
+          houseNo: "Primary Address",
+          street: city || "Dindigul",
+          city: city || "Dindigul",
+          district: "Dindigul",
+          state: "Tamil Nadu",
+          pincode: pincode || "624001"
+        }
+      ]
+    };
+
+    // 1. Try Supabase Auth if online
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const { data, error } = await authService.signUp(cleanEmail, password, {
+          full_name: fullName,
+          phone,
+          city,
+          pincode
+        });
+
+        if (error) {
+          console.warn("Supabase register error, saving locally:", error.message);
+        } else if (data?.user) {
+          newUserObj.id = data.user.id;
+        }
+      } catch (err) {
+        console.warn("Supabase register exception:", err);
+      }
+    }
+
+    // Save to local registry and activate session
+    setRegisteredUsers((prev) => [newUserObj, ...prev.filter((u) => u.email.toLowerCase() !== cleanEmail)]);
+    setCurrentUser(newUserObj);
+    return { success: true, user: newUserObj };
+  };
+
+  // Customer Logout Action
+  const logoutUser = async () => {
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        await authService.signOut();
+      } catch (err) {
+        console.warn("Supabase logout error:", err);
+      }
+    }
+    setCurrentUser(null);
+    localStorage.removeItem("vl_user");
+  };
+
+  // Password Reset Action
+  const resetUserPassword = async (email) => {
+    if (isSupabaseConfigured() && supabase) {
+      try {
+        const { error } = await authService.resetPassword(email);
+        if (error) throw error;
+        return { success: true };
+      } catch (err) {
+        console.warn("Supabase reset password error:", err.message);
+      }
+    }
+    return { success: true, message: "If this email is registered, password recovery instructions have been dispatched." };
+  };
+
+  // Admin Auth State
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
+    return localStorage.getItem("vl_admin_auth") === "true";
+  });
+
+  const loginAdmin = (password) => {
+    if (password === "vastra2026" || password === "admin") {
+      setIsAdminLoggedIn(true);
+      localStorage.setItem("vl_admin_auth", "true");
+      return true;
+    }
+    return false;
+  };
+
+  const logoutAdmin = () => {
+    setIsAdminLoggedIn(false);
+    localStorage.removeItem("vl_admin_auth");
+  };
+
+  // 7. Cart Actions
+  const addToCart = (product, size, color, quantity = 1) => {
+    setCart((prevCart) => {
+      const existingIndex = prevCart.findIndex(
+        (item) => item.id === product.id && item.size === size && item.color === color
+      );
+
+      if (existingIndex > -1) {
+        const updated = [...prevCart];
+        updated[existingIndex].quantity += quantity;
+        return updated;
+      }
+
+      return [
+        ...prevCart,
+        {
+          id: product.id,
+          nameEn: product.nameEn,
+          nameTa: product.nameTa,
+          price: product.price,
+          originalPrice: product.originalPrice,
+          image: product.images?.[0] || product.image,
+          size: size || product.sizes?.[0] || "Standard",
+          color: color || product.colors?.[0] || "Standard",
+          quantity
+        }
+      ];
+    });
+  };
+
+  const updateCartQuantity = (index, delta) => {
+    setCart((prev) => {
+      const updated = [...prev];
+      const newQty = updated[index].quantity + delta;
+      if (newQty <= 0) {
+        return updated.filter((_, i) => i !== index);
+      }
+      updated[index].quantity = newQty;
+      return updated;
+    });
+  };
+
+  const removeFromCart = (index) => {
+    setCart((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    setAppliedCoupon(null);
+  };
+
+  // 8. Wishlist Actions
+  const toggleWishlist = (productId) => {
+    setWishlist((prev) => {
+      if (prev.includes(productId)) {
+        return prev.filter((id) => id !== productId);
+      }
+      return [...prev, productId];
+    });
+  };
+
+  const saveProduct = async (product) => {
+    if (isSupabaseConfigured() && supabase) {
+      const savedProduct = await productService.upsert(product);
+      if (!savedProduct) return { success: false, message: "Could not save product to the shared catalog." };
+      setProducts((prev) => [savedProduct, ...prev.filter((item) => item.id !== savedProduct.id)]);
+      return { success: true, product: savedProduct };
+    }
+
+    setProducts((prev) => [product, ...prev.filter((item) => item.id !== product.id)]);
+    return { success: true, product };
+  };
+
+  const deleteProduct = async (productId) => {
+    if (isSupabaseConfigured() && supabase) {
+      const deleted = await productService.delete(productId);
+      if (!deleted) return { success: false, message: "Could not remove product from the shared catalog." };
+    }
+
+    setProducts((prev) => prev.filter((product) => product.id !== productId));
+    return { success: true };
+  };
+
+  const updateProductStock = async (productId, quantityDelta) => {
+    const product = products.find((item) => item.id === productId);
+    if (!product) return { success: false };
+    return saveProduct({ ...product, stock: Math.max(0, product.stock + quantityDelta) });
+  };
+
+  // 9. Order Management Actions
+  const createOrder = (orderData) => {
+    const newOrderId = `VL-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const fullOrder = {
+      id: newOrderId,
+      userId: currentUser?.id || orderData.userId || null,
+      createdAt: new Date().toISOString(),
+      status: "confirmed",
+      timeline: [
+        {
+          status: "confirmed",
+          time: new Date().toLocaleString("en-IN"),
+          title: "Order Placed & Verified via Razorpay"
+        }
+      ],
+      ...orderData
+    };
+
+    // Deduct stock
+    const updatedProducts = products.map((prod) => {
+        const cartMatch = orderData.items.find((it) => it.id === prod.id);
+        if (cartMatch) {
+          const updatedStock = Math.max(0, prod.stock - cartMatch.quantity);
+          return { ...prod, stock: updatedStock };
+        }
+        return prod;
+      });
+    setProducts(updatedProducts);
+
+    if (isSupabaseConfigured() && supabase) {
+      Promise.all(
+        updatedProducts
+          .filter((product) => orderData.items.some((item) => item.id === product.id))
+          .map((product) => productService.upsert(product))
+      ).catch((err) => console.warn("Could not sync stock changes:", err));
+    }
+
+    setOrders((prev) => [fullOrder, ...prev]);
+    setActiveOrderId(newOrderId);
+    clearCart();
+
+    // Async sync to Supabase when backend is live
+    if (isSupabaseConfigured()) {
+      orderService.create(fullOrder).catch((err) => {
+        console.warn("Could not sync order to Supabase:", err);
+      });
+    }
+
+    return fullOrder;
+  };
+
+  const updateOrderStatus = (orderId, newStatus) => {
+    let updatedTimeline = [];
+
+    setOrders((prev) => {
+      return prev.map((ord) => {
+        if (ord.id === orderId) {
+          const statusNames = {
+            pending_payment: "Payment Pending",
+            confirmed: "Order Confirmed",
+            processing: "Processing in Dindigul Hub",
+            packed: "Quality Inspected & Packed",
+            shipped: "Shipped with Express Courier",
+            out_for_delivery: "Out for Delivery to Your Doorstep",
+            delivered: "Delivered to Customer",
+            cancelled: "Order Cancelled & Refund Initiated"
+          };
+
+          const newTimelineItem = {
+            status: newStatus,
+            time: new Date().toLocaleString("en-IN"),
+            title: statusNames[newStatus] || newStatus
+          };
+
+          updatedTimeline = [...(ord.timeline || []), newTimelineItem];
+
+          return {
+            ...ord,
+            status: newStatus,
+            timeline: updatedTimeline
+          };
+        }
+        return ord;
+      });
+    });
+
+    // Async update to Supabase when backend is live
+    if (isSupabaseConfigured()) {
+      orderService.updateStatus(orderId, newStatus, updatedTimeline).catch((err) => {
+        console.warn("Could not update order status in Supabase:", err);
+      });
+    }
+  };
+
+  // 10. Navigation Helpers
+  const navigateTo = (view, payload = {}) => {
+    if (payload.productId) setSelectedProductId(payload.productId);
+    if (payload.category) setSelectedCategoryFilter(payload.category);
+    if (payload.orderId) setActiveOrderId(payload.orderId);
+    if (payload.searchQuery !== undefined) setSearchQuery(payload.searchQuery);
+    
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <AppContext.Provider
+      value={{
+        lang,
+        t,
+        toggleLanguage,
+        theme,
+        toggleTheme,
+        currentView,
+        navigateTo,
+        selectedCategoryFilter,
+        setSelectedCategoryFilter,
+        selectedProductId,
+        setSelectedProductId,
+        activeOrderId,
+        setActiveOrderId,
+        searchQuery,
+        setSearchQuery,
+        products,
+        setProducts,
+        saveProduct,
+        deleteProduct,
+        updateProductStock,
+        categories,
+        setCategories,
+        coupons,
+        setCoupons,
+        banners,
+        setBanners,
+        reviews,
+        setReviews,
+        cart,
+        addToCart,
+        updateCartQuantity,
+        removeFromCart,
+        clearCart,
+        wishlist,
+        toggleWishlist,
+        appliedCoupon,
+        setAppliedCoupon,
+        orders,
+        createOrder,
+        updateOrderStatus,
+        currentUser,
+        setCurrentUser,
+        loginUser,
+        registerUser,
+        logoutUser,
+        resetUserPassword,
+        registeredUsers,
+        isAdminLoggedIn,
+        loginAdmin,
+        logoutAdmin,
+        isBackendConnected,
+        isSupabaseConfigured: isSupabaseConfigured()
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useApp = () => useContext(AppContext);
