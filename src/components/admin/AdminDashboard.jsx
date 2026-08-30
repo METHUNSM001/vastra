@@ -82,7 +82,7 @@ export const AdminDashboard = () => {
     if (loginAdmin(passwordInput)) {
       setAuthError("");
     } else {
-      setAuthError("Incorrect password. Hint: 'admin' or 'vastra2026'");
+      setAuthError("Incorrect password. Please try again.");
     }
   };
 
