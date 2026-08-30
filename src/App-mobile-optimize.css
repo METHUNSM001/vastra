@@ -451,7 +451,7 @@
     outline-offset: 2px !important;
   }
 
-  .auth-icon-input {
+  input.auth-icon-input {
     padding-left: 48px !important;
     padding-right: 48px !important;
   }
