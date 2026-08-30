@@ -411,6 +411,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                   <User size={18} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                   <input
                     type="text"
+                      className="auth-icon-input"
                     required
                     placeholder="e.g. Sneha Ramanathan"
                     value={regFullName}
@@ -435,6 +436,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                     <Mail size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                     <input
                       type="email"
+                      className="auth-icon-input"
                       required
                       placeholder="you@gmail.com"
                       value={regEmail}
@@ -458,6 +460,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                     <Phone size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                     <input
                       type="tel"
+                      className="auth-icon-input"
                       required
                       maxLength={10}
                       placeholder="9488412345"
@@ -484,6 +487,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                     <MapPin size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                     <input
                       type="text"
+                      className="auth-icon-input"
                       placeholder="Dindigul"
                       value={regCity}
                       onChange={(e) => setRegCity(e.target.value)}
@@ -528,6 +532,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                     <Lock size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                     <input
                       type={showPassword ? "text" : "password"}
+                      className="auth-icon-input"
                       required
                       placeholder="Min 6 chars"
                       value={regPassword}
@@ -551,6 +556,7 @@ export const AuthView = ({ defaultMode = "login", redirectView = "account", onSu
                     <KeyRound size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                     <input
                       type={showPassword ? "text" : "password"}
+                      className="auth-icon-input"
                       required
                       placeholder="Re-enter password"
                       value={regConfirmPassword}
