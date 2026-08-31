@@ -1,36 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+
 /* ==========================================================================
    VASTRA LAKSHNAM DESIGN SYSTEM & TOKENS
-   Theme: Warm Ivory, Soft Blush, Dusty Rose, Champagne Gold, Deep Plum
+   Theme: Luxury Pink + White / Black + Pink
    ========================================================================== */
 
 :root {
-  /* Core Color Palette */
-  --bg-primary: #FAF8F5;
-  --bg-surface: #FFFFFF;
-  --bg-secondary: #F5EFEB;
-  --bg-subtle: #FDFBF7;
-  --bg-blush: #FCEFEF;
-  --bg-card: #FFFFFF;
+  /* Light theme: pink + white */
+  --bg-primary: #fff7fa;
+  --bg-surface: #ffffff;
+  --bg-secondary: #ffeaf3;
+  --bg-subtle: #fffafc;
+  --bg-blush: #ffdfe9;
+  --bg-card: #ffffff;
 
   /* Brand Accents */
-  --brand-primary: #9E3D52;       /* Deep Rose / Maroon */
-  --brand-primary-hover: #832E40;
-  --brand-secondary: #D4A373;     /* Warm Gold / Champagne */
-  --brand-secondary-light: #FAEDCD;
-  --brand-rose: #E29578;
-  --brand-blush: #F6BD60;
+  --brand-primary: #d94f86;
+  --brand-primary-hover: #c53a72;
+  --brand-secondary: #eea8c0;
+  --brand-secondary-light: #fff1f7;
+  --brand-rose: #f39bb8;
+  --brand-blush: #f8d7e6;
   
   /* Text & Neutral Hierarchy */
-  --text-main: #2B2124;          /* Soft Deep Charcoal-Plum */
-  --text-secondary: #63575B;     /* Muted Charcoal */
-  --text-muted: #8E8286;         /* Light Gray-Plum */
-  --text-light: #FAF8F5;
-  --text-accent: #9E3D52;
+  --text-main: #2a1721;
+  --text-secondary: #5d4652;
+  --text-muted: #866579;
+  --text-light: #fff9fb;
+  --text-accent: #d94f86;
 
   /* Borders & Dividers */
-  --border-light: #F0E8E2;
-  --border-medium: #E3D7CF;
-  --border-focus: #9E3D52;
+  --border-light: #f7dfe9;
+  --border-medium: #efc5d5;
+  --border-focus: #d94f86;
 
   /* Badges & Status */
   --badge-new: #4F772D;
@@ -73,27 +75,27 @@
 }
 
 :root[data-theme="dark"] {
-  --bg-primary: #211b1d;
-  --bg-surface: #2b2326;
-  --bg-secondary: #382b2f;
-  --bg-subtle: #302629;
-  --bg-blush: #432f35;
-  --bg-card: #2b2326;
-  --text-main: #f7eee9;
-  --text-secondary: #d6c4c0;
-  --text-muted: #ad9996;
-  --text-light: #211b1d;
-  --text-accent: #ef9caf;
-  --border-light: #493b3e;
-  --border-medium: #665154;
-  --border-focus: #ef9caf;
-  --brand-primary: #ef8fa4;
-  --brand-primary-hover: #ffb0bd;
-  --brand-secondary: #e5b783;
-  --brand-secondary-light: #4a3a2d;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.28);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --bg-primary: #09090b;
+  --bg-surface: #141114;
+  --bg-secondary: #1b1419;
+  --bg-subtle: #0f0c0f;
+  --bg-blush: #27151d;
+  --bg-card: #141114;
+  --text-main: #fff3f9;
+  --text-secondary: #f0d2e3;
+  --text-muted: #d7a4c1;
+  --text-light: #0d0a0d;
+  --text-accent: #ff7bb0;
+  --border-light: #2e1c26;
+  --border-medium: #4b2b3a;
+  --border-focus: #ff7bb0;
+  --brand-primary: #ff6ead;
+  --brand-primary-hover: #ff8dc0;
+  --brand-secondary: #ff9bc5;
+  --brand-secondary-light: #3a1d2d;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.65);
 }
 
 body {
@@ -114,13 +116,31 @@ html {
 }
 
 body {
-  background-color: var(--bg-primary);
+  background:
+    radial-gradient(circle at top left, rgba(217, 79, 134, 0.06), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(238, 168, 192, 0.12), transparent 18%),
+    var(--bg-primary);
   color: var(--text-main);
-  font-family: var(--font-sans);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 400;
   line-height: 1.55;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgba(217, 79, 134, 0.2);
+  color: var(--text-main);
 }
 
 /* Tamil font class helper */
@@ -129,9 +149,23 @@ body {
 }
 
 h1, h2, h3, h4, .font-serif {
-  font-family: var(--font-serif);
+  font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
   letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+
+.section-kicker {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand-primary);
+}
+
+.section-heading {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
   color: var(--text-main);
 }
 

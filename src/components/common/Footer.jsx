@@ -7,7 +7,7 @@ export const Footer = () => {
   const { lang, t, navigateTo, categories } = useApp();
 
   return (
-    <footer style={{ backgroundColor: "#251B20", color: "#F7EBE8", marginTop: "60px", paddingTop: "50px", paddingBottom: "30px", borderTop: "3px solid var(--brand-secondary)" }}>
+    <footer style={{ background: "linear-gradient(180deg, #1b1216 0%, #120d10 100%)", color: "#F7EBE8", marginTop: "60px", paddingTop: "50px", paddingBottom: "30px", borderTop: "3px solid var(--brand-secondary)" }}>
       
       {/* Value Proposition Highlights */}
       <div className="container" style={{ paddingBottom: "40px", borderBottom: "1px solid rgba(247, 235, 232, 0.12)" }}>

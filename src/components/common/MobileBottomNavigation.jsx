@@ -94,19 +94,19 @@ export const MobileBottomNavigation = () => {
               }}
             >
               <div style={{ position: "relative" }}>
-                <Icon size={18} strokeWidth={isActive ? 2.3 : 1.8} />
+                <Icon size={26} strokeWidth={isActive ? 2.3 : 1.8} />
                 {item.badge && (
                   <span
                     style={{
                       position: "absolute",
-                      top: "-4px",
-                      right: "-8px",
+                      top: "-6px",
+                      right: "-10px",
                       backgroundColor: "var(--brand-primary)",
                       color: "#FFFFFF",
                       fontSize: "0.65rem",
                       fontWeight: "700",
-                      width: "16px",
-                      height: "16px",
+                      width: "18px",
+                      height: "18px",
                       borderRadius: "50%",
                       display: "flex",
                       alignItems: "center",

@@ -83,13 +83,15 @@ export function AppContent() {
             </section>
 
             {/* Brand Story Banner */}
-            <section style={{ padding: "60px 0", backgroundColor: "#F5ECE6" }}>
-              <div className="container" style={{ textAlign: "center", maxWidth: "800px" }}>
-                <span style={{ fontSize: "2rem" }}>🌸</span>
-                <h2 className="font-serif" style={{ fontSize: "2.2rem", color: "var(--brand-primary)", marginTop: "12px", marginBottom: "14px" }}>
+            <section style={{ padding: "64px 0", background: "linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-blush) 100%)" }}>
+              <div className="container" style={{ textAlign: "center", maxWidth: "820px" }}>
+                <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: "70px", height: "70px", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.65)", border: "1px solid var(--border-medium)", boxShadow: "var(--shadow-sm)", marginBottom: "18px" }}>
+                  <span style={{ fontSize: "2rem" }}>🌸</span>
+                </div>
+                <h2 className="font-serif" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--brand-primary)", marginBottom: "16px" }}>
                   "{t.brand.tagline}"
                 </h2>
-                <p style={{ fontSize: "1.05rem", lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: "24px" }}>
+                <p style={{ fontSize: "1.05rem", lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: "26px", maxWidth: "700px", marginLeft: "auto", marginRight: "auto" }}>
                   {t.footer.aboutBrand}
                 </p>
                 <div className="flex items-center justify-center gap-4" style={{ flexWrap: "wrap" }}>

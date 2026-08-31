@@ -34,20 +34,23 @@ export const ProductCard = ({ product, onQuickView }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        backgroundColor: "#FFFFFF",
-        borderRadius: "4px",
+        backgroundColor: "var(--bg-surface)",
+        borderRadius: "20px",
         overflow: "hidden",
         border: "1px solid var(--border-light)",
         cursor: "pointer",
         display: "flex",
         flexDirection: "column",
         position: "relative",
-        boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-        height: "100%"
+        boxShadow: "var(--shadow-sm)",
+        height: "100%",
+        transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
+        transform: isHovered ? "translateY(-3px)" : "translateY(0)",
+        boxShadow: isHovered ? "var(--shadow-md)" : "var(--shadow-sm)"
       }}
     >
       {/* Product Image Section */}
-      <div style={{ position: "relative", width: "100%", aspectRatio: "3/4", backgroundColor: "#F9F5F2", overflow: "hidden" }}>
+      <div style={{ position: "relative", width: "100%", aspectRatio: "3/4", background: "linear-gradient(135deg, var(--bg-subtle) 0%, var(--bg-secondary) 100%)", overflow: "hidden" }}>
         <img
           src={product.images?.[0] || product.image}
           alt={title}
@@ -58,7 +61,9 @@ export const ProductCard = ({ product, onQuickView }) => {
             left: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover"
+            objectFit: "cover",
+            transform: isHovered ? "scale(1.04)" : "scale(1)",
+            transition: "transform 0.35s ease"
           }}
         />
 
@@ -103,7 +108,7 @@ export const ProductCard = ({ product, onQuickView }) => {
       <div style={{ padding: "8px 8px 12px 8px", display: "flex", flexDirection: "column", flex: 1 }}>
         
         {/* Title */}
-        <div style={{ fontSize: "0.85rem", color: "#212121", lineHeight: 1.3, marginBottom: "4px", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden", fontWeight: "500" }}>
+        <div style={{ fontSize: "0.85rem", color: "var(--text-main)", lineHeight: 1.3, marginBottom: "4px", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden", fontWeight: "600" }}>
           {title}
         </div>
 
@@ -120,7 +125,7 @@ export const ProductCard = ({ product, onQuickView }) => {
 
         {/* Price Row */}
         <div className="flex items-baseline gap-2" style={{ marginBottom: "2px", flexWrap: "wrap" }}>
-          <span style={{ fontSize: "1rem", fontWeight: "700", color: "#212121" }}>
+          <span style={{ fontSize: "1rem", fontWeight: "700", color: "var(--brand-primary)" }}>
             ₹{product.price.toLocaleString("en-IN")}
           </span>
           {product.originalPrice && product.originalPrice > product.price && (

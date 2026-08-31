@@ -280,7 +280,7 @@ export const AdminDashboard = () => {
 
       {/* Admin Nav Tabs */}
       <div style={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid var(--border-light)", padding: "0 24px" }}>
-        <div className="container-wide flex gap-6" style={{ overflowX: "auto", whiteSpace: "nowrap" }}>
+        <div className="container-wide flex gap-6" style={{ overflowX: "auto", flexWrap: "wrap" }}>
           {[
             { id: "dashboard", label: "Dashboard Overview", icon: BarChart3 },
             { id: "products", label: `Products (${products.length})`, icon: Package },

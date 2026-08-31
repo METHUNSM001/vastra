@@ -103,9 +103,11 @@ export const HeroSection = () => {
                 fontSize: "clamp(1.5rem, 4.5vw, 3rem)",
                 lineHeight: 1.15,
                 fontWeight: "700",
-                color: "var(--brand-primary)",
+                color: "#000000",
                 marginBottom: "12px",
-                letterSpacing: "-0.01em"
+                letterSpacing: "-0.01em",
+                textAlign: "left",
+                width: "100%"
               }}
             >
               {lang === "ta" 
@@ -118,9 +120,10 @@ export const HeroSection = () => {
               style={{
                 fontSize: "0.95rem",
                 lineHeight: 1.5,
-                color: "var(--text-secondary)",
+                color: "#000000",
                 marginBottom: "18px",
-                maxWidth: "480px"
+                maxWidth: "480px",
+                textAlign: "left"
               }}
             >
               {lang === "ta" 
@@ -157,14 +160,14 @@ export const HeroSection = () => {
             </div>
 
             {/* Dindigul Handcrafted Guarantee */}
-            <div className="flex items-center gap-6 hero-guarantee" style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid var(--border-light)", fontSize: "0.82rem", color: "var(--text-secondary)" }}>
-              <div className="flex items-center gap-2">
-                <Award size={16} color="var(--brand-secondary)" />
-                <span>{t.hero.features.dindigulHeritage}</span>
+            <div className="flex items-center gap-6 hero-guarantee" style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid var(--border-light)", fontSize: "0.82rem", color: "#000000", display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+              <div className="flex items-center gap-2" style={{ color: "#000000", minWidth: 0 }}>
+                <Award size={16} color="#000000" />
+                <span style={{ color: "#000000" }}>{t.hero.features.dindigulHeritage}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={16} color="var(--brand-secondary)" />
-                <span>{t.hero.features.pureFabric}</span>
+              <div className="flex items-center gap-2" style={{ color: "#000000", minWidth: 0 }}>
+                <ShieldCheck size={16} color="#000000" />
+                <span style={{ color: "#000000" }}>{t.hero.features.pureFabric}</span>
               </div>
             </div>
 
@@ -196,10 +199,36 @@ export const HeroSection = () => {
 
       <style>{`
         @media (max-width: 768px) {
-          .hero-bg-image { width: 100% !important; opacity: 0.25; }
-          .hero-gradient-overlay { background: rgba(250, 248, 245, 0.92) !important; }
-          .hero-action-buttons { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
-          .hero-action-buttons > * { width: 100% !important; justify-content: center !important; }
+          .hero-card {
+            min-height: auto !important;
+            padding: 18px 0 20px !important;
+          }
+          .hero-bg-image { width: 100% !important; opacity: 0.22; }
+          .hero-gradient-overlay { background: linear-gradient(180deg, rgba(255, 247, 250, 0.96) 0%, rgba(255, 247, 250, 0.92) 68%, rgba(255, 247, 250, 0.9) 100%) !important; }
+          .hero-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 8px 16px 0 !important;
+            z-index: 2 !important;
+          }
+          .hero-action-buttons {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 10px !important;
+            margin-top: 8px !important;
+          }
+          .hero-action-buttons > * {
+            width: 100% !important;
+            justify-content: center !important;
+            display: inline-flex !important;
+          }
+          .hero-guarantee {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 10px !important;
+            margin-top: 18px !important;
+            padding-top: 14px !important;
+          }
         }
       `}</style>
     </section>

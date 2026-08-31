@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useApp } from "../../context/AppContext";
 import { 
   ShoppingBag, 
@@ -38,6 +38,25 @@ export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchInput, setSearchInput] = useState(searchQuery || "");
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      return;
+    }
+
+    const handleScroll = () => setIsMobileMenuOpen(false);
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "relative";
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobileMenuOpen]);
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -454,14 +473,39 @@ export const Header = () => {
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 1000, backgroundColor: "rgba(0,0,0,0.5)", display: "flex" }}>
-          <div className="animate-fade-in" style={{ width: "80%", maxWidth: "300px", height: "100%", backgroundColor: "var(--bg-surface)", padding: "24px 20px", overflowY: "auto", boxShadow: "var(--shadow-lg)", display: "flex", flexDirection: "column" }}>
-            <div className="flex items-center justify-between" style={{ marginBottom: "24px", paddingBottom: "16px", borderBottom: "1px solid var(--border-light)" }}>
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            backgroundColor: "rgba(15, 8, 11, 0.52)",
+            display: "flex",
+            alignItems: "stretch"
+          }}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <div
+            className="animate-fade-in"
+            style={{
+              width: "min(82vw, 320px)",
+              height: "100%",
+              background: "linear-gradient(180deg, #120d10 0%, #1b1218 100%)",
+              padding: "24px 20px",
+              overflowY: "auto",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.45)",
+              display: "flex",
+              flexDirection: "column",
+              borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+              transform: "translateX(0)"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between" style={{ marginBottom: "24px", paddingBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <img src="/logo.png" alt="Logo" style={{ height: "30px", width: "auto", borderRadius: "4px" }} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/100x100/9E3D52/FFF?text=VL" }} />
-                <span className="font-serif" style={{ fontSize: "1.3rem", fontWeight: "700", color: "var(--brand-primary)" }}>Menu</span>
+                <span className="font-serif" style={{ fontSize: "1.3rem", fontWeight: "700", color: "#f9d8e6" }}>Menu</span>
               </div>
-              <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: "none", color: "var(--text-main)", padding: "4px" }}>
+              <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: "none", color: "#f9d8e6", padding: "4px" }}>
                 <X size={24} />
               </button>
             </div>
@@ -471,28 +515,28 @@ export const Header = () => {
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
                 <button
                   onClick={() => { setIsMobileMenuOpen(false); navigateTo(currentUser ? "account" : "auth"); }}
-                  style={{ flex: 1, padding: "10px", borderRadius: "var(--radius-sm)", backgroundColor: "var(--bg-secondary)", color: "var(--brand-primary)", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                  style={{ flex: 1, padding: "10px", borderRadius: "var(--radius-sm)", backgroundColor: "#f6d3df", color: "#171114", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", border: "1px solid rgba(255, 126, 175, 0.7)" }}
                 >
                   <User size={18} />
                   <span style={{ fontSize: "0.85rem" }}>{currentUser ? (currentUser.name ? currentUser.name.split(" ")[0] : "Account") : (lang === "ta" ? "உள்நுழைக" : "Sign In")}</span>
                 </button>
                 <button
                   onClick={() => toggleLanguage()}
-                  style={{ padding: "10px 12px", borderRadius: "var(--radius-sm)", border: "1px solid var(--brand-secondary)", backgroundColor: "var(--bg-surface)", color: "var(--text-main)", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}
+                  style={{ padding: "10px 12px", borderRadius: "var(--radius-sm)", border: "1px solid rgba(255, 126, 175, 0.7)", backgroundColor: "#1b1317", color: "#f9d8e6", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}
                 >
-                  <Globe size={18} color="var(--brand-primary)" />
+                  <Globe size={18} color="#ff9ac5" />
                   <span style={{ fontSize: "0.85rem" }}>{lang === "en" ? "தமிழ்" : "EN"}</span>
                 </button>
               </div>
 
               {/* Navigation Links */}
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("home"); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "var(--bg-subtle)", fontWeight: "600" }}>{t.nav.home}</button>
-                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: null }); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "var(--bg-subtle)", fontWeight: "600", color: "var(--brand-primary)" }}>✨ {t.nav.allProducts}</button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("home"); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "rgba(255,255,255,0.04)", fontWeight: "600", color: "#f5e2eb" }}>{t.nav.home}</button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: null }); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "rgba(255,255,255,0.04)", fontWeight: "600", color: "#ffb8d3" }}>✨ {t.nav.allProducts}</button>
                 
-                <div style={{ padding: "12px 10px 4px 10px", fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "700", marginTop: "8px", letterSpacing: "0.05em" }}>CATEGORIES</div>
+                <div style={{ padding: "12px 10px 4px 10px", fontSize: "0.75rem", color: "#f8dfe9", fontWeight: "700", marginTop: "8px", letterSpacing: "0.05em" }}>CATEGORIES</div>
                 {categories.map((cat) => (
-                  <button key={cat.id} onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: cat.slug }); }} style={{ textAlign: "left", padding: "10px 10px", fontWeight: "500", color: "var(--text-secondary)", fontSize: "0.95rem" }}>
+                  <button key={cat.id} onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: cat.slug }); }} style={{ textAlign: "left", padding: "10px 10px", fontWeight: "500", color: "#f5e2eb", fontSize: "0.95rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "10px" }}>
                     {lang === "ta" ? cat.nameTa : cat.nameEn}
                   </button>
                 ))}
@@ -504,7 +548,7 @@ export const Header = () => {
                   href={getWhatsAppUrl("Hi Vastra Lakshnam! Need help.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px", backgroundColor: "#E8F5E9", color: "#128C7E", borderRadius: "var(--radius-sm)", fontWeight: "600" }}
+                  style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px", backgroundColor: "#f8d5e3", color: "#171114", borderRadius: "var(--radius-sm)", fontWeight: "700", border: "1px solid rgba(255, 126, 175, 0.5)" }}
                 >
                   <PhoneCall size={18} />
                   <span>{lang === "ta" ? "வாட்ஸ்அப் உதவி" : "WhatsApp Support"}</span>

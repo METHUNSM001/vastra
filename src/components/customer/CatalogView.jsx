@@ -162,24 +162,24 @@ export const CatalogView = () => {
         <aside 
           className="desktop-filter-sidebar"
           style={{
-            backgroundColor: "var(--bg-surface)",
+            background: "linear-gradient(180deg, #1b1218 0%, #120d10 100%)",
             padding: "24px",
             borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--border-light)",
-            boxShadow: "var(--shadow-sm)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
             height: "fit-content",
             position: "sticky",
             top: "140px"
           }}
         >
-          <div className="flex items-center justify-between" style={{ marginBottom: "20px", paddingBottom: "12px", borderBottom: "1px solid var(--border-light)" }}>
-            <h3 style={{ fontSize: "1.05rem", fontWeight: "700", display: "flex", alignItems: "center", gap: "6px" }}>
-              <Filter size={18} color="var(--brand-primary)" />
+          <div className="flex items-center justify-between" style={{ marginBottom: "20px", paddingBottom: "12px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}>
+            <h3 style={{ fontSize: "1.05rem", fontWeight: "700", display: "flex", alignItems: "center", gap: "6px", color: "#ffb8d3" }}>
+              <Filter size={18} color="#ffb8d3" />
               {t.catalog.filterBy}
             </h3>
             <button 
               onClick={clearAllFilters}
-              style={{ fontSize: "0.78rem", color: "var(--brand-primary)", background: "none", fontWeight: "600" }}
+              style={{ fontSize: "0.78rem", color: "#ff9ac5", background: "none", fontWeight: "600" }}
             >
               {t.catalog.clearAll}
             </button>
@@ -187,7 +187,7 @@ export const CatalogView = () => {
 
           {/* 1. Category Filter */}
           <div style={{ marginBottom: "24px" }}>
-            <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "var(--text-main)", display: "block", marginBottom: "10px" }}>
+            <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "#f5e2eb", display: "block", marginBottom: "10px" }}>
               {t.catalog.filters.category}
             </label>
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -195,12 +195,14 @@ export const CatalogView = () => {
                 onClick={() => setSelectedCategory("all")}
                 style={{
                   textAlign: "left",
-                  background: selectedCategory === "all" ? "var(--bg-blush)" : "none",
-                  color: selectedCategory === "all" ? "var(--brand-primary)" : "var(--text-secondary)",
+                  background: selectedCategory === "all" ? "rgba(255, 152, 197, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                  color: selectedCategory === "all" ? "#ffb8d3" : "#d4b5c0",
                   fontWeight: selectedCategory === "all" ? "600" : "400",
-                  padding: "6px 10px",
+                  padding: "8px 12px",
                   borderRadius: "var(--radius-sm)",
-                  fontSize: "0.85rem"
+                  fontSize: "0.85rem",
+                  border: selectedCategory === "all" ? "1px solid rgba(255, 152, 197, 0.3)" : "1px solid transparent",
+                  transition: "all 0.3s ease"
                 }}
               >
                 {lang === "ta" ? "அனைத்து ஆடைகள்" : "All Categories"}
@@ -211,12 +213,14 @@ export const CatalogView = () => {
                   onClick={() => setSelectedCategory(c.slug)}
                   style={{
                     textAlign: "left",
-                    background: selectedCategory === c.slug ? "var(--bg-blush)" : "none",
-                    color: selectedCategory === c.slug ? "var(--brand-primary)" : "var(--text-secondary)",
+                    background: selectedCategory === c.slug ? "rgba(255, 152, 197, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                    color: selectedCategory === c.slug ? "#ffb8d3" : "#d4b5c0",
                     fontWeight: selectedCategory === c.slug ? "600" : "400",
-                    padding: "6px 10px",
+                    padding: "8px 12px",
                     borderRadius: "var(--radius-sm)",
-                    fontSize: "0.85rem"
+                    fontSize: "0.85rem",
+                    border: selectedCategory === c.slug ? "1px solid rgba(255, 152, 197, 0.3)" : "1px solid transparent",
+                    transition: "all 0.3s ease"
                   }}
                 >
                   {lang === "ta" ? c.nameTa : c.nameEn}
@@ -227,12 +231,12 @@ export const CatalogView = () => {
 
           {/* 2. Price Range Slider */}
           <div style={{ marginBottom: "24px" }}>
-            <div className="flex items-center justify-between" style={{ marginBottom: "8px" }}>
-              <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "var(--text-main)" }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: "12px" }}>
+              <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "#f5e2eb" }}>
                 {t.catalog.filters.priceRange}
               </label>
-              <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--brand-primary)" }}>
-                Up to ₹{priceRange}
+              <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#ffb8d3", backgroundColor: "rgba(255, 152, 197, 0.15)", padding: "4px 8px", borderRadius: "4px" }}>
+                ₹{priceRange}
               </span>
             </div>
             <input
@@ -242,13 +246,13 @@ export const CatalogView = () => {
               step="200"
               value={priceRange}
               onChange={(e) => setPriceRange(Number(e.target.value))}
-              style={{ width: "100%", accentColor: "var(--brand-primary)" }}
+              style={{ width: "100%", accentColor: "#ffb8d3", height: "4px" }}
             />
           </div>
 
           {/* 3. Sizes */}
           <div style={{ marginBottom: "24px" }}>
-            <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "var(--text-main)", display: "block", marginBottom: "10px" }}>
+            <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "#f5e2eb", display: "block", marginBottom: "10px" }}>
               {t.catalog.filters.size}
             </label>
             <div className="flex" style={{ flexWrap: "wrap", gap: "6px" }}>
@@ -257,13 +261,14 @@ export const CatalogView = () => {
                   key={s}
                   onClick={() => setSelectedSize(selectedSize === s ? "all" : s)}
                   style={{
-                    padding: "5px 10px",
+                    padding: "6px 12px",
                     borderRadius: "var(--radius-sm)",
-                    backgroundColor: selectedSize === s ? "var(--brand-primary)" : "var(--bg-secondary)",
-                    color: selectedSize === s ? "#FFFFFF" : "var(--text-main)",
+                    backgroundColor: selectedSize === s ? "#ffb8d3" : "rgba(255, 255, 255, 0.08)",
+                    color: selectedSize === s ? "#171114" : "#d4b5c0",
                     fontSize: "0.8rem",
-                    fontWeight: "500",
-                    border: "1px solid var(--border-medium)"
+                    fontWeight: selectedSize === s ? "600" : "500",
+                    border: selectedSize === s ? "1px solid #ffb8d3" : "1px solid rgba(255, 255, 255, 0.12)",
+                    transition: "all 0.3s ease"
                   }}
                 >
                   {s}
@@ -274,7 +279,7 @@ export const CatalogView = () => {
 
           {/* 4. Fabric Types */}
           <div style={{ marginBottom: "24px" }}>
-            <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "var(--text-main)", display: "block", marginBottom: "8px" }}>
+            <label style={{ fontSize: "0.88rem", fontWeight: "600", color: "#f5e2eb", display: "block", marginBottom: "8px" }}>
               {t.catalog.filters.fabric}
             </label>
             <div className="flex" style={{ flexWrap: "wrap", gap: "6px" }}>
@@ -283,12 +288,14 @@ export const CatalogView = () => {
                   key={f.query}
                   onClick={() => setSelectedFabric(selectedFabric === f.query ? "all" : f.query)}
                   style={{
-                    padding: "4px 10px",
+                    padding: "5px 12px",
                     borderRadius: "var(--radius-full)",
-                    backgroundColor: selectedFabric === f.query ? "var(--brand-secondary)" : "var(--bg-subtle)",
-                    color: selectedFabric === f.query ? "#FFFFFF" : "var(--text-secondary)",
+                    backgroundColor: selectedFabric === f.query ? "#ff9ac5" : "rgba(255, 255, 255, 0.08)",
+                    color: selectedFabric === f.query ? "#FFFFFF" : "#d4b5c0",
                     fontSize: "0.78rem",
-                    border: "1px solid var(--border-light)"
+                    fontWeight: selectedFabric === f.query ? "600" : "500",
+                    border: selectedFabric === f.query ? "1px solid #ff9ac5" : "1px solid rgba(255, 255, 255, 0.12)",
+                    transition: "all 0.3s ease"
                   }}
                 >
                   {f.label}
@@ -298,26 +305,26 @@ export const CatalogView = () => {
           </div>
 
           {/* 5. Rating & Availability */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <label className="flex items-center gap-2" style={{ cursor: "pointer", fontSize: "0.85rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingTop: "12px", borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
+            <label className="flex items-center gap-2" style={{ cursor: "pointer", fontSize: "0.85rem", color: "#f5e2eb" }}>
               <input
                 type="checkbox"
                 checked={inStockOnly}
                 onChange={(e) => setInStockOnly(e.target.checked)}
-                style={{ accentColor: "var(--brand-primary)" }}
+                style={{ accentColor: "#ffb8d3" }}
               />
               <span>{t.catalog.filters.inStockOnly}</span>
             </label>
 
-            <label className="flex items-center gap-2" style={{ cursor: "pointer", fontSize: "0.85rem" }}>
+            <label className="flex items-center gap-2" style={{ cursor: "pointer", fontSize: "0.85rem", color: "#f5e2eb" }}>
               <input
                 type="checkbox"
                 checked={minRating === 4}
                 onChange={(e) => setMinRating(e.target.checked ? 4 : 0)}
-                style={{ accentColor: "var(--brand-primary)" }}
+                style={{ accentColor: "#ffb8d3" }}
               />
               <span className="flex items-center gap-1">
-                <Star size={14} fill="#F59E0B" color="#F59E0B" /> {t.catalog.filters.fourStarsUp}
+                <Star size={14} fill="#ff9ac5" color="#ff9ac5" /> {t.catalog.filters.fourStarsUp}
               </span>
             </label>
           </div>
@@ -367,32 +374,35 @@ export const CatalogView = () => {
 
       {/* Mobile Drawer Filter */}
       {isMobileFilterOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 1000, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "flex-end" }}>
-          <div style={{ width: "85%", maxWidth: "340px", height: "100%", backgroundColor: "#FFFFFF", padding: "24px", overflowY: "auto" }}>
-            <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
-              <h3 style={{ fontSize: "1.1rem", fontWeight: "700" }}>{t.catalog.filterBy}</h3>
-              <button onClick={() => setIsMobileFilterOpen(false)} style={{ background: "none", padding: "4px" }}>
+        <div style={{ position: "fixed", inset: 0, zIndex: 1000, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ width: "85%", maxWidth: "340px", height: "100%", background: "linear-gradient(180deg, #1b1218 0%, #120d10 100%)", padding: "24px", overflowY: "auto" }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: "20px", paddingBottom: "12px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: "700", color: "#ffb8d3" }}>{t.catalog.filterBy}</h3>
+              <button onClick={() => setIsMobileFilterOpen(false)} style={{ background: "none", padding: "4px", color: "#ffb8d3" }}>
                 <X size={20} />
               </button>
             </div>
             
             {/* Same filter items in mobile drawer */}
             <div style={{ marginBottom: "20px" }}>
-              <label style={{ fontWeight: "600", fontSize: "0.9rem", display: "block", marginBottom: "8px" }}>{t.catalog.filters.category}</label>
+              <label style={{ fontWeight: "600", fontSize: "0.9rem", display: "block", marginBottom: "8px", color: "#f5e2eb" }}>{t.catalog.filters.category}</label>
               <select 
                 value={selectedCategory} 
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                style={{ width: "100%" }}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: "6px", backgroundColor: "rgba(255, 255, 255, 0.08)", color: "#f5e2eb", border: "1px solid rgba(255, 255, 255, 0.12)" }}
               >
-                <option value="all">{lang === "ta" ? "அனைத்து ஆடைகள்" : "All Categories"}</option>
+                <option value="all" style={{ backgroundColor: "#1b1218", color: "#f5e2eb" }}>{lang === "ta" ? "அனைத்து ஆடைகள்" : "All Categories"}</option>
                 {categories.map((c) => (
-                  <option key={c.id} value={c.slug}>{lang === "ta" ? c.nameTa : c.nameEn}</option>
+                  <option key={c.id} value={c.slug} style={{ backgroundColor: "#1b1218", color: "#f5e2eb" }}>{lang === "ta" ? c.nameTa : c.nameEn}</option>
                 ))}
               </select>
             </div>
 
             <div style={{ marginBottom: "20px" }}>
-              <label style={{ fontWeight: "600", fontSize: "0.9rem", display: "block", marginBottom: "8px" }}>{t.catalog.filters.priceRange} (₹{priceRange})</label>
+              <div className="flex items-center justify-between" style={{ marginBottom: "12px" }}>
+                <label style={{ fontWeight: "600", fontSize: "0.9rem", color: "#f5e2eb" }}>{t.catalog.filters.priceRange}</label>
+                <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#ffb8d3", backgroundColor: "rgba(255, 152, 197, 0.15)", padding: "4px 8px", borderRadius: "4px" }}>₹{priceRange}</span>
+              </div>
               <input
                 type="range"
                 min="400"
@@ -400,14 +410,14 @@ export const CatalogView = () => {
                 step="200"
                 value={priceRange}
                 onChange={(e) => setPriceRange(Number(e.target.value))}
-                style={{ width: "100%", accentColor: "var(--brand-primary)" }}
+                style={{ width: "100%", accentColor: "#ffb8d3" }}
               />
             </div>
 
             <button
               onClick={() => setIsMobileFilterOpen(false)}
               className="btn-primary"
-              style={{ width: "100%", marginTop: "24px" }}
+              style={{ width: "100%", marginTop: "24px", background: "linear-gradient(135deg, #ff9ac5 0%, #ffb8d3 100%)", color: "#171114", fontWeight: "700", padding: "12px", borderRadius: "var(--radius-full)", border: "none" }}
             >
               {lang === "ta" ? "முடிவுகளை காண்க" : "Apply & View Results"}
             </button>
