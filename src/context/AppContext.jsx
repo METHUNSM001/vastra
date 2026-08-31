@@ -52,103 +52,137 @@ export const AppProvider = ({ children }) => {
   const [activeOrderId, setActiveOrderId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 3. Products & Catalog Database State
-  const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem("vl_products");
-    return saved ? JSON.parse(saved) : initialProducts;
-  });
+  // 3. Products & Catalog Database State - Supabase is source of truth
+  // Initialize with empty, will be populated from Supabase
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [coupons, setCoupons] = useState([]);
+  const [banners, setBanners] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
-  const [categories, setCategories] = useState(() => {
-    const saved = localStorage.getItem("vl_categories");
-    return saved ? JSON.parse(saved) : initialCategories;
-  });
-
-  const [coupons, setCoupons] = useState(() => {
-    const saved = localStorage.getItem("vl_coupons");
-    return saved ? JSON.parse(saved) : initialCoupons;
-  });
-
-  const [banners, setBanners] = useState(() => {
-    const saved = localStorage.getItem("vl_banners");
-    return saved ? JSON.parse(saved) : initialBanners;
-  });
-
-  const [reviews, setReviews] = useState(() => {
-    const saved = localStorage.getItem("vl_reviews");
-    return saved ? JSON.parse(saved) : initialReviews;
-  });
-
-  // Save to LocalStorage on changes
-  useEffect(() => {
-    localStorage.setItem("vl_products", JSON.stringify(products));
-  }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("vl_categories", JSON.stringify(categories));
-  }, [categories]);
-
-  useEffect(() => {
-    localStorage.setItem("vl_coupons", JSON.stringify(coupons));
-  }, [coupons]);
-
-  useEffect(() => {
-    localStorage.setItem("vl_banners", JSON.stringify(banners));
-  }, [banners]);
-
-  useEffect(() => {
-    localStorage.setItem("vl_reviews", JSON.stringify(reviews));
-  }, [reviews]);
+  // Track if initial Supabase sync is complete
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   // Supabase Backend Sync State
   const [isBackendConnected, setIsBackendConnected] = useState(() => isSupabaseConfigured());
 
+  // INITIAL LOAD: Fetch from Supabase, fallback to initial data
   useEffect(() => {
-    if (!isSupabaseConfigured()) return;
-
-    const syncWithSupabase = async () => {
+    const initializeData = async () => {
       try {
-        const [remoteProducts, remoteCategories, remoteCoupons, remoteOrders] = await Promise.all([
-          productService.getAll(),
-          categoryService.getAll(),
-          couponService.getAll(),
-          orderService.getAll()
-        ]);
+        if (isSupabaseConfigured()) {
+          // Try to load from Supabase first
+          const [remoteProducts, remoteCategories, remoteCoupons, remoteOrders] = await Promise.all([
+            productService.getAll(),
+            categoryService.getAll(),
+            couponService.getAll(),
+            orderService.getAll()
+          ]);
 
-        if (remoteProducts) setProducts(remoteProducts);
-        if (remoteCategories) setCategories(remoteCategories.map(fromSupabaseCategory));
-        if (remoteCoupons) setCoupons(remoteCoupons);
-        if (remoteOrders) setOrders(remoteOrders);
-        setIsBackendConnected(true);
+          // Load from Supabase if data exists, otherwise use initial data
+          if (remoteProducts && remoteProducts.length > 0) {
+            setProducts(remoteProducts);
+          } else {
+            setProducts(initialProducts);
+          }
+
+          if (remoteCategories && remoteCategories.length > 0) {
+            setCategories(remoteCategories.map(fromSupabaseCategory));
+          } else {
+            setCategories(initialCategories);
+          }
+
+          if (remoteCoupons && remoteCoupons.length > 0) {
+            setCoupons(remoteCoupons);
+          } else {
+            setCoupons(initialCoupons);
+          }
+
+          if (remoteOrders && remoteOrders.length > 0) {
+            setOrders(remoteOrders);
+          }
+
+          setIsBackendConnected(true);
+          console.info("✅ Data synchronized from Supabase backend");
+        } else {
+          // If Supabase not configured, use initial data
+          setProducts(initialProducts);
+          setCategories(initialCategories);
+          setCoupons(initialCoupons);
+          setBanners(initialBanners);
+          setReviews(initialReviews);
+          console.info("ℹ️ Using initial local data (Supabase not configured)");
+        }
       } catch (err) {
-        console.warn("Supabase initial sync fallback:", err);
+        console.warn("⚠️ Error loading data, using initial data:", err);
+        setProducts(initialProducts);
+        setCategories(initialCategories);
+        setCoupons(initialCoupons);
+        setBanners(initialBanners);
+        setReviews(initialReviews);
+      } finally {
+        setIsDataLoaded(true);
       }
     };
 
-    syncWithSupabase();
+    initializeData();
   }, []);
 
+  // REAL-TIME SYNC: Listen for changes from other devices/users
   useEffect(() => {
-    if (!supabase) return undefined;
+    if (!supabase || !isDataLoaded) return undefined;
 
     const refreshProducts = async () => {
       const remoteProducts = await productService.getAll();
-      if (remoteProducts) setProducts(remoteProducts);
-    };
-    const refreshCategories = async () => {
-      const remoteCategories = await categoryService.getAll();
-      if (remoteCategories) setCategories(remoteCategories.map(fromSupabaseCategory));
+      if (remoteProducts) {
+        setProducts(remoteProducts);
+        console.info("📡 Products updated from Supabase (real-time)");
+      }
     };
 
+    const refreshCategories = async () => {
+      const remoteCategories = await categoryService.getAll();
+      if (remoteCategories) {
+        setCategories(remoteCategories.map(fromSupabaseCategory));
+        console.info("📡 Categories updated from Supabase (real-time)");
+      }
+    };
+
+    const refreshCoupons = async () => {
+      const remoteCoupons = await couponService.getAll();
+      if (remoteCoupons) {
+        setCoupons(remoteCoupons);
+        console.info("📡 Coupons updated from Supabase (real-time)");
+      }
+    };
+
+    const refreshOrders = async () => {
+      const remoteOrders = await orderService.getAll();
+      if (remoteOrders) {
+        setOrders(remoteOrders);
+        console.info("📡 Orders updated from Supabase (real-time)");
+      }
+    };
+
+    // Subscribe to real-time changes from Supabase
     const channel = supabase
       .channel("catalog-live-sync")
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, refreshProducts)
       .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, refreshCategories)
-      .subscribe();
+      .on("postgres_changes", { event: "*", schema: "public", table: "coupons" }, refreshCoupons)
+      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, refreshOrders)
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          console.info("✅ Real-time sync connected - All devices will see live updates");
+        } else if (status === "CHANNEL_ERROR") {
+          console.warn("⚠️ Real-time sync error - Changes may be delayed");
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [isDataLoaded]);
 
   // 4. Cart & Wishlist State
   const [cart, setCart] = useState(() => {
@@ -171,57 +205,10 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem("vl_wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
 
-  // 5. Orders Database & Tracking
-  const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem("vl_orders");
-    if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: "VL-2026-9041",
-        createdAt: "2026-08-27T10:30:00Z",
-        customer: {
-          name: "Priya Sundar",
-          phone: "9876543210",
-          email: "priya@gmail.com"
-        },
-        shippingAddress: {
-          houseNo: "No. 45, Lotus Villa",
-          street: "R.M. Colony Main Road",
-          area: "Near Rock Fort Temple",
-          city: "Dindigul",
-          district: "Dindigul",
-          state: "Tamil Nadu",
-          pincode: "624001"
-        },
-        items: [
-          {
-            id: "prod-101",
-            nameEn: "Dindigul Handloom Zari Silk Saree",
-            nameTa: "திண்டுக்கல் கைத்தறி ஜரி பட்டு புடவை",
-            price: 3499,
-            quantity: 1,
-            size: "Free Size",
-            color: "Blush Pink",
-            image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80"
-          }
-        ],
-        subtotal: 3499,
-        discount: 349,
-        deliveryCharge: 0,
-        total: 3150,
-        paymentStatus: "PAID",
-        paymentId: "pay_RAZORPAY_9041_VERIFIED",
-        status: "shipped",
-        timeline: [
-          { status: "confirmed", time: "2026-08-27 10:30 AM", title: "Order Confirmed & Paid via Razorpay" },
-          { status: "processing", time: "2026-08-27 02:15 PM", title: "Fabric Inspected at Dindigul Hub" },
-          { status: "packed", time: "2026-08-28 09:00 AM", title: "Packed in Luxury Gift Box" },
-          { status: "shipped", time: "2026-08-28 04:30 PM", title: "Dispatched with Express Courier (AWB #ST78990)" }
-        ]
-      }
-    ];
-  });
+  // 5. Orders Database & Tracking - Sync from Supabase
+  const [orders, setOrders] = useState([]);
 
+  // Initialize orders from Supabase (included in initial data load above)
   useEffect(() => {
     localStorage.setItem("vl_orders", JSON.stringify(orders));
   }, [orders]);
@@ -705,6 +692,7 @@ export const AppProvider = ({ children }) => {
         loginAdmin,
         logoutAdmin,
         isBackendConnected,
+        isDataLoaded,
         isSupabaseConfigured: isSupabaseConfigured()
       }}
     >

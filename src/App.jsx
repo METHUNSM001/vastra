@@ -19,7 +19,35 @@ import { AdminDashboard } from "./components/admin/AdminDashboard";
 import { Sparkles, ArrowRight, Star, Heart, ShoppingBag, ShieldCheck } from "lucide-react";
 
 export function AppContent() {
-  const { currentView, lang, t, products, navigateTo } = useApp();
+  const { currentView, lang, t, products, navigateTo, isDataLoaded } = useApp();
+
+  // Show loading screen while data is being fetched from Supabase
+  if (!isDataLoaded) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--bg-primary)",
+        flexDirection: "column",
+        gap: "24px"
+      }}>
+        <div style={{
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          border: "3px solid var(--bg-secondary)",
+          borderTop: "3px solid var(--brand-primary)",
+          animation: "spin 1s linear infinite"
+        }} />
+        <p style={{ fontSize: "1.1rem", color: "var(--text-secondary)", fontWeight: "500" }}>
+          {lang === "ta" ? "ஆடைகள் இறக்கிறது..." : "Loading collection..."}
+        </p>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   // If in Admin Portal
   if (currentView === "admin") {
