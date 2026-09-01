@@ -433,14 +433,15 @@ export const AdminDashboard = () => {
             </div>
 
             <div style={{ backgroundColor: adminCardBg, borderRadius: "var(--radius-lg)", border: `1px solid ${adminBorder}`, overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem" }}>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", maxWidth: "100%" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem", minWidth: "600px" }}>
                 <thead>
                   <tr style={{ backgroundColor: adminTableHeaderBg, textAlign: "left" }}>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Product</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Category</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Price</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Stock</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Actions</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Product</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Category</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Price</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Stock</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -476,6 +477,7 @@ export const AdminDashboard = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
@@ -554,15 +556,16 @@ export const AdminDashboard = () => {
             <h2 style={{ fontSize: "1.4rem", fontWeight: "700", marginBottom: "20px", color: adminTextMain }}>Inventory & Replenishment Monitor</h2>
 
             <div style={{ backgroundColor: adminCardBg, borderRadius: "var(--radius-lg)", border: `1px solid ${adminBorder}`, overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem" }}>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", maxWidth: "100%" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem", minWidth: "650px" }}>
                 <thead>
                   <tr style={{ backgroundColor: adminTableHeaderBg, textAlign: "left" }}>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>SKU</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Product Name</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Category</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Available Stock</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Status</th>
-                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600" }}>Quick Restock</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>SKU</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Product Name</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Category</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Available Stock</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Status</th>
+                    <th style={{ padding: "12px 16px", color: adminTableHeaderText, fontWeight: "600", whiteSpace: "nowrap" }}>Quick Restock</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -598,6 +601,7 @@ export const AdminDashboard = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
