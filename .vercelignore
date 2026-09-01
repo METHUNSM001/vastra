@@ -1,0 +1,10 @@
+node_modules
+.git
+.env
+.env.local
+.gitignore
+README.md
+TESTING_GUIDE.md
+DATA_SYNC_FIX.md
+MOBILE_OPTIMIZATION_GUIDE.md
+TEST_REPORT.md
