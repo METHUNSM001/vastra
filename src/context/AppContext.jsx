@@ -11,6 +11,7 @@ import {
   authService 
 } from "../services/supabase";
 import { fromSupabaseCategory } from "../services/supabase";
+import { resolveRemoteCollection } from "./dataLoadStrategy";
 
 const AppContext = createContext();
 
@@ -80,23 +81,13 @@ export const AppProvider = ({ children }) => {
           ]);
 
           // Load from Supabase if data exists, otherwise use initial data
-          if (remoteProducts && remoteProducts.length > 0) {
-            setProducts(remoteProducts);
-          } else {
-            setProducts(initialProducts);
-          }
+          setProducts(resolveRemoteCollection(remoteProducts, initialProducts));
 
-          if (remoteCategories && remoteCategories.length > 0) {
-            setCategories(remoteCategories.map(fromSupabaseCategory));
-          } else {
-            setCategories(initialCategories);
-          }
+          const resolvedCategories = resolveRemoteCollection(remoteCategories, initialCategories);
+          setCategories(resolvedCategories?.map ? resolvedCategories.map(fromSupabaseCategory) : initialCategories);
 
-          if (remoteCoupons && remoteCoupons.length > 0) {
-            setCoupons(remoteCoupons);
-          } else {
-            setCoupons(initialCoupons);
-          }
+          const resolvedCoupons = resolveRemoteCollection(remoteCoupons, initialCoupons);
+          setCoupons(resolvedCoupons || initialCoupons);
 
           if (remoteOrders && remoteOrders.length > 0) {
             setOrders(remoteOrders);
