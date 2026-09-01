@@ -10,7 +10,7 @@ export const Footer = () => {
     <footer style={{ background: "linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-subtle) 100%)", color: "var(--text-main)", marginTop: "60px", paddingTop: "50px", paddingBottom: "30px", borderTop: "3px solid var(--brand-secondary)" }}>
       
       {/* Value Proposition Highlights */}
-      <div className="container" style={{ paddingBottom: "40px", borderBottom: "1px solid rgba(247, 235, 232, 0.12)" }}>
+      <div className="container" style={{ paddingBottom: "40px", borderBottom: "1px solid var(--border-light)" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
           
           <div className="flex items-center gap-3">
@@ -19,7 +19,7 @@ export const Footer = () => {
             </div>
             <div>
               <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "இலவச விரைவு டெலிவரி" : "Fast Delivery"}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "₹999-க்கு மேல் இலவசம்" : "Free over ₹999 across TN"}</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{lang === "ta" ? "₹999-க்கு மேல் இலவசம்" : "Free over ₹999 across TN"}</div>
             </div>
           </div>
 
@@ -29,7 +29,7 @@ export const Footer = () => {
             </div>
             <div>
               <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "பாதுகாப்பான கட்டணம்" : "100% Razorpay Safe"}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "UPI, கார்டுகள் & NetBanking" : "UPI, Cards & NetBanking"}</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{lang === "ta" ? "UPI, கார்டுகள் & NetBanking" : "UPI, Cards & NetBanking"}</div>
             </div>
           </div>
 
@@ -39,7 +39,7 @@ export const Footer = () => {
             </div>
             <div>
               <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "எளிதான மாற்று வசதி" : "7-Day Easy Exchange"}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "நிபந்தனையற்ற வாடிக்கையாளர் திருப்தி" : "Guaranteed fabric satisfaction"}</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{lang === "ta" ? "நிபந்தனையற்ற வாடிக்கையாளர் திருப்தி" : "Guaranteed fabric satisfaction"}</div>
             </div>
           </div>
 
@@ -49,7 +49,7 @@ export const Footer = () => {
             </div>
             <div>
               <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "வாட்ஸ்அப் ஆதரவு" : "WhatsApp Ordering"}</div>
-              <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "திண்டுக்கல் நேரடி உதவி" : "+91 94884 12345"}</div>
+              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{lang === "ta" ? "திண்டுக்கல் நேரடி உதவி" : "+91 94884 12345"}</div>
             </div>
           </div>
 
@@ -71,7 +71,7 @@ export const Footer = () => {
             <div style={{ fontStyle: "italic", color: "var(--brand-secondary)", fontSize: "0.92rem", marginBottom: "14px" }}>
               "{t.brand.tagline}"
             </div>
-            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "rgba(247, 235, 232, 0.75)", marginBottom: "20px" }}>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "var(--text-secondary)", marginBottom: "20px" }}>
               {t.footer.aboutBrand}
             </p>
             <div className="flex items-center gap-3">
@@ -127,22 +127,22 @@ export const Footer = () => {
             </h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
               <li>
-                <button onClick={() => navigateTo("home")} style={{ background: "none", color: "rgba(247, 235, 232, 0.75)" }}>
+                <button onClick={() => navigateTo("home")} style={{ background: "none", color: "var(--text-main)" }}>
                   {t.nav.home}
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo("catalog", { category: null })} style={{ background: "none", color: "rgba(247, 235, 232, 0.75)" }}>
+                <button onClick={() => navigateTo("catalog", { category: null })} style={{ background: "none", color: "var(--text-main)" }}>
                   {t.nav.newArrivals}
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo("account", { tab: "orders" })} style={{ background: "none", color: "rgba(247, 235, 232, 0.75)" }}>
+                <button onClick={() => navigateTo("account", { tab: "orders" })} style={{ background: "none", color: "var(--text-main)" }}>
                   {t.header.myOrders}
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateTo("account", { tab: "track" })} style={{ background: "none", color: "rgba(247, 235, 232, 0.75)" }}>
+                <button onClick={() => navigateTo("account", { tab: "track" })} style={{ background: "none", color: "var(--text-main)" }}>
                   {t.orderTracking.title}
                 </button>
               </li>
@@ -164,7 +164,7 @@ export const Footer = () => {
                 <li key={cat.id}>
                   <button 
                     onClick={() => navigateTo("catalog", { category: cat.slug })}
-                    style={{ background: "none", color: "rgba(247, 235, 232, 0.75)" }}
+                    style={{ background: "none", color: "var(--text-main)" }}
                   >
                     {lang === "ta" ? cat.nameTa : cat.nameEn}
                   </button>
@@ -178,7 +178,7 @@ export const Footer = () => {
             <h4 style={{ color: "var(--text-main)", fontSize: "1.05rem", marginBottom: "18px", letterSpacing: "0.02em" }}>
               {t.footer.contactUs}
             </h4>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "0.88rem", color: "rgba(247, 235, 232, 0.75)" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "0.88rem", color: "var(--text-main)" }}>
               <div className="flex items-center gap-3">
                 <MapPin size={18} color="var(--brand-secondary)" />
                 <span>{t.footer.address}</span>
@@ -198,7 +198,7 @@ export const Footer = () => {
       </div>
 
       {/* Copyright Bar */}
-      <div style={{ borderTop: "1px solid rgba(247, 235, 232, 0.08)", paddingTop: "20px", textAlign: "center", fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.5)" }}>
+      <div style={{ borderTop: "1px solid var(--border-light)", paddingTop: "20px", textAlign: "center", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
         <p className="container">{t.footer.copyright}</p>
       </div>
     </footer>

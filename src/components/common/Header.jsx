@@ -531,12 +531,12 @@ export const Header = () => {
 
               {/* Navigation Links */}
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("home"); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "rgba(255,255,255,0.04)", fontWeight: "600", color: "#f5e2eb" }}>{t.nav.home}</button>
-                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: null }); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "rgba(255,255,255,0.04)", fontWeight: "600", color: "#ffb8d3" }}>✨ {t.nav.allProducts}</button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("home"); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "rgba(255,255,255,0.04)", fontWeight: "600", color: "var(--text-main)" }}>{t.nav.home}</button>
+                <button onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: null }); }} style={{ textAlign: "left", padding: "12px 10px", borderRadius: "var(--radius-sm)", backgroundColor: "rgba(255,255,255,0.04)", fontWeight: "600", color: "var(--text-main)" }}>✨ {t.nav.allProducts}</button>
                 
-                <div style={{ padding: "12px 10px 4px 10px", fontSize: "0.75rem", color: "#f8dfe9", fontWeight: "700", marginTop: "8px", letterSpacing: "0.05em" }}>CATEGORIES</div>
+                <div style={{ padding: "12px 10px 4px 10px", fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: "700", marginTop: "8px", letterSpacing: "0.05em" }}>CATEGORIES</div>
                 {categories.map((cat) => (
-                  <button key={cat.id} onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: cat.slug }); }} style={{ textAlign: "left", padding: "10px 10px", fontWeight: "500", color: "#f5e2eb", fontSize: "0.95rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "10px" }}>
+                  <button key={cat.id} onClick={() => { setIsMobileMenuOpen(false); navigateTo("catalog", { category: cat.slug }); }} style={{ textAlign: "left", padding: "10px 10px", fontWeight: "500", color: "var(--text-main)", fontSize: "0.95rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "10px" }}>
                     {lang === "ta" ? cat.nameTa : cat.nameEn}
                   </button>
                 ))}
