@@ -136,7 +136,7 @@ export const AppProvider = ({ children }) => {
       const remoteProducts = await productService.getAll();
       if (remoteProducts) {
         setProducts(remoteProducts);
-        console.info("📡 Products updated from Supabase (real-time)");
+        console.info("📡 Products updated from Supabase (real-time sync)");
       }
     };
 
@@ -144,7 +144,7 @@ export const AppProvider = ({ children }) => {
       const remoteCategories = await categoryService.getAll();
       if (remoteCategories) {
         setCategories(remoteCategories.map(fromSupabaseCategory));
-        console.info("📡 Categories updated from Supabase (real-time)");
+        console.info("📡 Categories updated from Supabase (real-time sync)");
       }
     };
 
@@ -152,7 +152,7 @@ export const AppProvider = ({ children }) => {
       const remoteCoupons = await couponService.getAll();
       if (remoteCoupons) {
         setCoupons(remoteCoupons);
-        console.info("📡 Coupons updated from Supabase (real-time)");
+        console.info("📡 Coupons updated from Supabase (real-time sync)");
       }
     };
 
@@ -160,27 +160,43 @@ export const AppProvider = ({ children }) => {
       const remoteOrders = await orderService.getAll();
       if (remoteOrders) {
         setOrders(remoteOrders);
-        console.info("📡 Orders updated from Supabase (real-time)");
+        console.info("📡 Orders updated from Supabase (real-time sync)");
       }
     };
 
     // Subscribe to real-time changes from Supabase
     const channel = supabase
-      .channel("catalog-live-sync")
+      .channel("catalog-live-sync", { config: { broadcast: { self: true } } })
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, refreshProducts)
       .on("postgres_changes", { event: "*", schema: "public", table: "categories" }, refreshCategories)
       .on("postgres_changes", { event: "*", schema: "public", table: "coupons" }, refreshCoupons)
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, refreshOrders)
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
-          console.info("✅ Real-time sync connected - All devices will see live updates");
+          console.info("✅ Real-time sync ACTIVE - All devices synced");
         } else if (status === "CHANNEL_ERROR") {
-          console.warn("⚠️ Real-time sync error - Changes may be delayed");
+          console.warn("⚠️ Real-time sync error - Enabling fallback polling");
         }
       });
 
+    // FALLBACK: Periodic polling every 5 seconds to ensure sync even if subscription fails
+    const pollInterval = setInterval(() => {
+      Promise.all([
+        productService.getAll(),
+        categoryService.getAll(),
+        couponService.getAll(),
+        orderService.getAll()
+      ]).then(([remoteProducts, remoteCategories, remoteCoupons, remoteOrders]) => {
+        if (remoteProducts) setProducts(remoteProducts);
+        if (remoteCategories) setCategories(remoteCategories.map(fromSupabaseCategory));
+        if (remoteCoupons) setCoupons(remoteCoupons);
+        if (remoteOrders) setOrders(remoteOrders);
+      }).catch((err) => console.warn("Poll sync error:", err));
+    }, 5000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(pollInterval);
     };
   }, [isDataLoaded]);
 
@@ -506,25 +522,48 @@ export const AppProvider = ({ children }) => {
   };
 
   const saveProduct = async (product) => {
-    if (isSupabaseConfigured() && supabase) {
-      const savedProduct = await productService.upsert(product);
-      if (!savedProduct) return { success: false, message: "Could not save product to the shared catalog." };
-      setProducts((prev) => [savedProduct, ...prev.filter((item) => item.id !== savedProduct.id)]);
-      return { success: true, product: savedProduct };
-    }
+    try {
+      if (isSupabaseConfigured() && supabase) {
+        const savedProduct = await productService.upsert(product);
+        if (!savedProduct) return { success: false, message: "Could not save product to the shared catalog." };
+        
+        // Update local state
+        setProducts((prev) => [savedProduct, ...prev.filter((item) => item.id !== savedProduct.id)]);
+        console.info("✅ Product saved and synced to all devices:", savedProduct.id);
+        return { success: true, product: savedProduct };
+      }
 
-    setProducts((prev) => [product, ...prev.filter((item) => item.id !== product.id)]);
-    return { success: true, product };
+      // Fallback to local state only if no Supabase
+      setProducts((prev) => [product, ...prev.filter((item) => item.id !== product.id)]);
+      console.warn("⚠️ Supabase not configured - saving locally only");
+      return { success: true, product };
+    } catch (err) {
+      console.error("Save product error:", err);
+      return { success: false, message: "Error saving product" };
+    }
   };
 
   const deleteProduct = async (productId) => {
-    if (isSupabaseConfigured() && supabase) {
-      const deleted = await productService.delete(productId);
-      if (!deleted) return { success: false, message: "Could not remove product from the shared catalog." };
+    try {
+      // Remove from local state immediately (optimistic update)
+      setProducts((prev) => prev.filter((product) => product.id !== productId));
+      
+      // Then delete from Supabase
+      if (isSupabaseConfigured() && supabase) {
+        const deleted = await productService.delete(productId);
+        if (!deleted) {
+          console.error("Failed to delete from Supabase, reverting...");
+          // Revert if Supabase delete fails - will be reloaded from server on next sync
+          return { success: false, message: "Could not remove product from the shared catalog." };
+        }
+        console.info("✅ Product deleted and synced to all devices");
+      }
+      
+      return { success: true };
+    } catch (err) {
+      console.error("Delete product error:", err);
+      return { success: false, message: "Error deleting product" };
     }
-
-    setProducts((prev) => prev.filter((product) => product.id !== productId));
-    return { success: true };
   };
 
   const updateProductStock = async (productId, quantityDelta) => {
