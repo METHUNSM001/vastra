@@ -22,6 +22,7 @@ import {
   DollarSign
 } from "lucide-react";
 import { generateInvoicePDF } from "../../services/invoiceGenerator";
+import { normalizeCategorySlug } from "../../services/supabase";
 
 export const AdminDashboard = () => {
   const { 
@@ -89,10 +90,11 @@ export const AdminDashboard = () => {
 
   const handleOpenProductModal = (prod = null) => {
     if (prod) {
+      const categoryLabel = categories.find((cat) => cat.slug === prod.category || cat.id === prod.category)?.nameEn || prod.category || "Sarees";
       setEditingProduct(prod);
       setPNameEn(prod.nameEn);
       setPNameTa(prod.nameTa || "");
-      setPCategory(prod.category);
+      setPCategory(categoryLabel);
       setPPrice(prod.price);
       setPOriginalPrice(prod.originalPrice || "");
       setPStock(prod.stock);
@@ -104,7 +106,7 @@ export const AdminDashboard = () => {
       setEditingProduct(null);
       setPNameEn("");
       setPNameTa("");
-      setPCategory(categories[0]?.slug || categories[0]?.id || "sarees");
+      setPCategory(categories[0]?.nameEn || "Sarees");
       setPPrice("");
       setPOriginalPrice("");
       setPStock(20);
@@ -118,12 +120,13 @@ export const AdminDashboard = () => {
 
   const handleSaveProduct = async (e) => {
     e.preventDefault();
+    const normalizedCategory = normalizeCategorySlug(pCategory || "Sarees");
     const productData = {
       id: editingProduct ? editingProduct.id : `prod-${Date.now()}`,
-      sku: editingProduct ? editingProduct.sku : `VL-${pCategory.substring(0,3).toUpperCase()}-${Math.floor(10 + Math.random()*90)}`,
+      sku: editingProduct ? editingProduct.sku : `VL-${normalizedCategory.substring(0,3).toUpperCase()}-${Math.floor(10 + Math.random()*90)}`,
       nameEn: pNameEn,
       nameTa: pNameTa || pNameEn,
-      category: pCategory,
+      category: normalizedCategory,
       price: Number(pPrice),
       originalPrice: Number(pOriginalPrice) || Number(pPrice) * 1.3,
       discount: pOriginalPrice ? Math.round(((pOriginalPrice - pPrice) / pOriginalPrice) * 100) : 25,
@@ -456,7 +459,9 @@ export const AdminDashboard = () => {
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: "12px 16px", textTransform: "capitalize", color: adminTextMain }}>{prod.category}</td>
+                      <td style={{ padding: "12px 16px", color: adminTextMain }}>
+                        {categories.find((cat) => cat.slug === prod.category || cat.id === prod.category)?.nameEn || prod.category}
+                      </td>
                       <td style={{ padding: "12px 16px", fontWeight: "700", color: "var(--brand-primary)" }}>₹{prod.price}</td>
                       <td style={{ padding: "12px 16px" }}>
                         <span style={{ color: prod.stock <= 5 ? "#DC2626" : "#065F46", fontWeight: "600" }}>
@@ -663,11 +668,14 @@ export const AdminDashboard = () => {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>
                   <label style={{ fontSize: "0.85rem", fontWeight: "600", display: "block", marginBottom: "4px" }}>Category</label>
-                  <select value={pCategory} onChange={(e) => setPCategory(e.target.value)} style={{ width: "100%" }}>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.slug}>{c.nameEn}</option>
-                    ))}
-                  </select>
+                  <input
+                    type="text"
+                    required
+                    value={pCategory}
+                    onChange={(e) => setPCategory(e.target.value)}
+                    placeholder="e.g. Sarees, Kurtis, Bridal Collection"
+                    style={{ width: "100%" }}
+                  />
                 </div>
 
                 <div>

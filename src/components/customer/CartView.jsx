@@ -78,22 +78,23 @@ export const CartView = () => {
   }
 
   return (
-    <div className="container" style={{ padding: "40px 20px 80px 20px" }}>
+    <div className="container mobile-cart-shell" style={{ padding: "40px 20px 80px 20px" }}>
       
-      <h1 className="font-serif" style={{ fontSize: "2rem", color: "var(--brand-primary)", marginBottom: "28px" }}>
+      <h1 className="font-serif mobile-cart-title" style={{ fontSize: "2rem", color: "var(--brand-primary)", marginBottom: "28px" }}>
         {t.cart.title} ({cart.reduce((s, i) => s + i.quantity, 0)})
       </h1>
 
       <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: "40px" }} className="cart-layout">
         
         {/* Left Column: Cart Items List */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }} className="cart-items-panel">
           {cart.map((item, index) => {
             const name = lang === "ta" ? item.nameTa || item.nameEn : item.nameEn;
 
             return (
               <div
                 key={`${item.id}-${item.size}-${item.color}-${index}`}
+                className="mobile-cart-item"
                 style={{
                   backgroundColor: "var(--bg-surface)",
                   padding: "18px",
@@ -104,7 +105,6 @@ export const CartView = () => {
                   alignItems: "center"
                 }}
               >
-                {/* Product Thumbnail */}
                 <img
                   src={item.image}
                   alt={name}
@@ -117,23 +117,21 @@ export const CartView = () => {
                   }}
                 />
 
-                {/* Details */}
                 <div style={{ flex: 1 }}>
                   <h3 style={{ fontSize: "1rem", fontWeight: "600", color: "var(--text-main)", marginBottom: "4px" }}>
                     {name}
                   </h3>
                   
-                  <div style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginBottom: "10px", display: "flex", gap: "12px" }}>
+                  <div style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginBottom: "10px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
                     <span>{t.cart.size}: <strong>{item.size}</strong></span>
                     <span>{t.cart.color}: <strong>{item.color}</strong></span>
                   </div>
 
-                  <div className="flex items-center justify-between" style={{ flexWrap: "wrap", gap: "12px" }}>
+                  <div className="flex items-center justify-between mobile-cart-meta" style={{ flexWrap: "wrap", gap: "12px" }}>
                     <div style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--brand-primary)" }}>
                       ₹{(item.price * item.quantity).toLocaleString("en-IN")}
                     </div>
 
-                    {/* Quantity Stepper */}
                     <div className="flex items-center" style={{ border: "1px solid var(--border-medium)", borderRadius: "var(--radius-full)", padding: "2px 6px", backgroundColor: "var(--bg-subtle)" }}>
                       <button
                         onClick={() => updateCartQuantity(index, -1)}
@@ -150,7 +148,6 @@ export const CartView = () => {
                       </button>
                     </div>
 
-                    {/* Remove Action */}
                     <button
                       onClick={() => removeFromCart(index)}
                       style={{ background: "none", color: "var(--text-muted)", padding: "4px", display: "flex", alignItems: "center", gap: "4px", fontSize: "0.82rem" }}
@@ -183,9 +180,9 @@ export const CartView = () => {
           </button>
         </div>
 
-        {/* Right Column: Order Summary & Coupon */}
         <div>
           <div
+            className="mobile-cart-summary"
             style={{
               backgroundColor: "var(--bg-surface)",
               padding: "24px",
@@ -200,10 +197,9 @@ export const CartView = () => {
               {t.cart.orderSummary}
             </h3>
 
-            {/* Coupon Box */}
             <div style={{ marginBottom: "24px", paddingBottom: "20px", borderBottom: "1px solid var(--border-light)" }}>
               {appliedCoupon ? (
-                <div style={{ backgroundColor: "#ECFDF5", border: "1px solid #A7F3D0", padding: "10px 14px", borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ backgroundColor: "#ECFDF5", border: "1px solid #A7F3D0", padding: "10px 14px", borderRadius: "var(--radius-sm)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", flexWrap: "wrap" }}>
                   <div className="flex items-center gap-2" style={{ color: "#065F46", fontSize: "0.88rem", fontWeight: "600" }}>
                     <Tag size={16} />
                     <span>{appliedCoupon.code} Applied (₹{discount} OFF)</span>
@@ -217,7 +213,7 @@ export const CartView = () => {
                 </div>
               ) : (
                 <form onSubmit={handleApplyCoupon}>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mobile-coupon-row">
                     <input
                       type="text"
                       value={couponInput}
@@ -234,7 +230,6 @@ export const CartView = () => {
                       {couponError}
                     </div>
                   )}
-                  {/* Available Coupon Suggestion */}
                   <div style={{ marginTop: "8px", fontSize: "0.75rem", color: "var(--text-muted)" }}>
                     💡 Use <strong>VASTRA10</strong> for 10% OFF above ₹999
                   </div>
@@ -242,7 +237,6 @@ export const CartView = () => {
               )}
             </div>
 
-            {/* Breakdown Calculations */}
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "0.92rem", marginBottom: "20px" }}>
               <div className="flex items-center justify-between" style={{ color: "var(--text-secondary)" }}>
                 <span>{t.cart.subtotal}</span>
@@ -282,7 +276,6 @@ export const CartView = () => {
               </div>
             </div>
 
-            {/* Checkout Button */}
             <button
               onClick={() => {
                 if (!currentUser) {
@@ -291,7 +284,7 @@ export const CartView = () => {
                   navigateTo("checkout");
                 }
               }}
-              className="btn-primary"
+              className="btn-primary mobile-checkout-btn"
               style={{ width: "100%", padding: "14px", fontSize: "1rem" }}
             >
               <span>
@@ -302,7 +295,6 @@ export const CartView = () => {
               <ArrowRight size={18} />
             </button>
 
-            {/* Trust Assurance */}
             <div className="flex items-center justify-center gap-2" style={{ marginTop: "16px", fontSize: "0.78rem", color: "var(--text-muted)" }}>
               <ShieldCheck size={16} color="var(--brand-secondary)" />
               <span>{t.cart.secureCheckoutNote}</span>
@@ -315,7 +307,37 @@ export const CartView = () => {
 
       <style>{`
         @media (max-width: 860px) {
-          .cart-layout { grid-template-columns: 1fr !important; }
+          .cart-layout { grid-template-columns: 1fr !important; gap: 18px !important; }
+          .mobile-cart-shell { padding: 18px 12px 64px !important; }
+          .mobile-cart-title { font-size: 1.7rem !important; margin-bottom: 18px !important; }
+          .cart-items-panel { gap: 12px !important; }
+          .mobile-cart-item {
+            padding: 12px !important;
+            gap: 12px !important;
+            align-items: flex-start !important;
+          }
+          .mobile-cart-item img {
+            width: 72px !important;
+            height: 90px !important;
+          }
+          .mobile-cart-meta {
+            align-items: center !important;
+            justify-content: space-between !important;
+          }
+          .mobile-cart-summary {
+            position: static !important;
+            padding: 18px 16px !important;
+          }
+          .mobile-coupon-row {
+            flex-direction: column !important;
+          }
+          .mobile-coupon-row button {
+            width: 100%;
+          }
+          .mobile-checkout-btn {
+            min-height: 52px !important;
+            font-size: 0.95rem !important;
+          }
         }
       `}</style>
 

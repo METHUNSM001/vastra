@@ -11,7 +11,7 @@ import {
   authService 
 } from "../services/supabase";
 import { fromSupabaseCategory } from "../services/supabase";
-import { resolveRemoteCollection } from "./dataLoadStrategy";
+import { resolveRemoteCollection, filterVisibleProducts } from "./dataLoadStrategy";
 
 const AppContext = createContext();
 
@@ -26,7 +26,7 @@ export const AppProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem("vl_theme");
     if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
-    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return "dark";
   });
 
   useEffect(() => {
@@ -60,6 +60,23 @@ export const AppProvider = ({ children }) => {
   const [coupons, setCoupons] = useState([]);
   const [banners, setBanners] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [hiddenProductIds, setHiddenProductIds] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("vl_hidden_products") || "[]");
+      return new Set(Array.isArray(saved) ? saved : []);
+    } catch (err) {
+      return new Set();
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("vl_hidden_products", JSON.stringify([...hiddenProductIds]));
+  }, [hiddenProductIds]);
+
+  useEffect(() => {
+    if (!isDataLoaded) return;
+    setProducts((prevProducts) => filterVisibleProducts(prevProducts, hiddenProductIds));
+  }, [hiddenProductIds, isDataLoaded]);
 
   // Track if initial Supabase sync is complete
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -81,7 +98,7 @@ export const AppProvider = ({ children }) => {
           ]);
 
           // Load from Supabase if data exists, otherwise use initial data
-          setProducts(resolveRemoteCollection(remoteProducts, initialProducts));
+          setProducts(filterVisibleProducts(resolveRemoteCollection(remoteProducts, initialProducts), hiddenProductIds));
 
           const resolvedCategories = resolveRemoteCollection(remoteCategories, initialCategories);
           setCategories(resolvedCategories?.map ? resolvedCategories.map(fromSupabaseCategory) : initialCategories);
@@ -106,7 +123,7 @@ export const AppProvider = ({ children }) => {
         }
       } catch (err) {
         console.warn("⚠️ Error loading data, using initial data:", err);
-        setProducts(initialProducts);
+        setProducts(filterVisibleProducts(initialProducts, hiddenProductIds));
         setCategories(initialCategories);
         setCoupons(initialCoupons);
         setBanners(initialBanners);
@@ -126,7 +143,7 @@ export const AppProvider = ({ children }) => {
     const refreshProducts = async () => {
       const remoteProducts = await productService.getAll();
       if (remoteProducts) {
-        setProducts(remoteProducts);
+        setProducts(filterVisibleProducts(remoteProducts, hiddenProductIds));
         console.info("📡 Products updated from Supabase (real-time sync)");
       }
     };
@@ -178,7 +195,7 @@ export const AppProvider = ({ children }) => {
         couponService.getAll(),
         orderService.getAll()
       ]).then(([remoteProducts, remoteCategories, remoteCoupons, remoteOrders]) => {
-        if (remoteProducts) setProducts(remoteProducts);
+        if (remoteProducts) setProducts(filterVisibleProducts(remoteProducts, hiddenProductIds));
         if (remoteCategories) setCategories(remoteCategories.map(fromSupabaseCategory));
         if (remoteCoupons) setCoupons(remoteCoupons);
         if (remoteOrders) setOrders(remoteOrders);
@@ -189,7 +206,7 @@ export const AppProvider = ({ children }) => {
       supabase.removeChannel(channel);
       clearInterval(pollInterval);
     };
-  }, [isDataLoaded]);
+  }, [isDataLoaded, hiddenProductIds]);
 
   // 4. Cart & Wishlist State
   const [cart, setCart] = useState(() => {
@@ -517,14 +534,23 @@ export const AppProvider = ({ children }) => {
       if (isSupabaseConfigured() && supabase) {
         const savedProduct = await productService.upsert(product);
         if (!savedProduct) return { success: false, message: "Could not save product to the shared catalog." };
-        
-        // Update local state
+
+        setHiddenProductIds((prev) => {
+          const next = new Set(prev);
+          next.delete(savedProduct.id);
+          return next;
+        });
+
         setProducts((prev) => [savedProduct, ...prev.filter((item) => item.id !== savedProduct.id)]);
         console.info("✅ Product saved and synced to all devices:", savedProduct.id);
         return { success: true, product: savedProduct };
       }
 
-      // Fallback to local state only if no Supabase
+      setHiddenProductIds((prev) => {
+        const next = new Set(prev);
+        next.delete(product.id);
+        return next;
+      });
       setProducts((prev) => [product, ...prev.filter((item) => item.id !== product.id)]);
       console.warn("⚠️ Supabase not configured - saving locally only");
       return { success: true, product };
@@ -536,20 +562,22 @@ export const AppProvider = ({ children }) => {
 
   const deleteProduct = async (productId) => {
     try {
-      // Remove from local state immediately (optimistic update)
+      setHiddenProductIds((prev) => {
+        const next = new Set(prev);
+        next.add(productId);
+        return next;
+      });
       setProducts((prev) => prev.filter((product) => product.id !== productId));
-      
-      // Then delete from Supabase
+
       if (isSupabaseConfigured() && supabase) {
         const deleted = await productService.delete(productId);
         if (!deleted) {
-          console.error("Failed to delete from Supabase, reverting...");
-          // Revert if Supabase delete fails - will be reloaded from server on next sync
-          return { success: false, message: "Could not remove product from the shared catalog." };
+          console.warn("Supabase delete did not confirm; keeping product hidden locally to prevent reappearance.");
+        } else {
+          console.info("✅ Product deleted and synced to all devices");
         }
-        console.info("✅ Product deleted and synced to all devices");
       }
-      
+
       return { success: true };
     } catch (err) {
       console.error("Delete product error:", err);

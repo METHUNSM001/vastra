@@ -1,8 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 
-// Read environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+// Read environment variables in both browser (Vite) and non-browser test contexts.
+const runtimeEnv = typeof import.meta !== "undefined" && import.meta.env ? import.meta.env : (typeof process !== "undefined" ? process.env : {});
+const supabaseUrl = runtimeEnv.VITE_SUPABASE_URL || "";
+const supabaseAnonKey = runtimeEnv.VITE_SUPABASE_ANON_KEY || "";
 
 // Check if credentials are properly configured (not empty and not default placeholder)
 export const isSupabaseConfigured = () => {
@@ -86,6 +87,91 @@ export const fromSupabaseCategory = (category) => ({
   itemCount: category.itemCount ?? category.count ?? 0
 });
 
+export const normalizeCategorySlug = (categoryValue) => {
+  const rawValue = (categoryValue ?? "").toString().trim();
+  if (!rawValue) return "";
+
+  return rawValue
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " ")
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+};
+
+const toTitleCase = (value) => {
+  return value
+    .toString()
+    .trim()
+    .replace(/[-_]+/g, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+};
+
+export const getCategorySeedForId = (categoryId) => {
+  const rawValue = (categoryId || "").toString().trim();
+  if (!rawValue) return null;
+
+  const normalizedId = normalizeCategorySlug(rawValue);
+  if (!normalizedId) return null;
+
+  const mappings = {
+    sarees: { id: "sarees", name_en: "Sarees", name_ta: "புடவைகள்", icon: "Sparkles", count: 0, image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80" },
+    kurtis: { id: "kurtis", name_en: "Kurtis & Sets", name_ta: "குர்திகள் & செட்ஸ்", icon: "Feather", count: 0, image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80" },
+    dresses: { id: "dresses", name_en: "Anarkalis & Dresses", name_ta: "அனார்கலி & ஆடைகள்", icon: "Crown", count: 0, image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80" },
+    tops: { id: "tops", name_en: "Tops & Tunics", name_ta: "டாப்ஸ் & டியூனிக்ஸ்", icon: "Gift", count: 0, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80" },
+    leggings: { id: "leggings", name_en: "Leggings & Palazzos", name_ta: "லெக்கின்ஸ் & பலாசோ", icon: "Flame", count: 0, image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80" },
+    "ethnic-wear": { id: "ethnic-wear", name_en: "Festive Ethnic Wear", name_ta: "பண்டிகை பாரம்பரிய உடைகள்", icon: "Sparkles", count: 0, image: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80" }
+  };
+
+  return mappings[normalizedId] || {
+    id: normalizedId,
+    name_en: toTitleCase(rawValue),
+    name_ta: rawValue,
+    icon: "Sparkles",
+    count: 0,
+    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"
+  };
+};
+
+export const ensureCategoryExists = async (categoryId) => {
+  if (!supabase || !categoryId) return null;
+
+  const rawValue = categoryId.toString().trim();
+  const normalizedId = normalizeCategorySlug(rawValue);
+  if (!normalizedId) return null;
+
+  try {
+    const { data: existing, error: checkError } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("id", normalizedId)
+      .maybeSingle();
+
+    if (checkError && checkError.code !== "PGRST116") throw checkError;
+    if (existing?.id) return existing;
+
+    const seed = getCategorySeedForId(rawValue);
+    if (!seed) return null;
+
+    const { data, error } = await supabase
+      .from("categories")
+      .upsert({ ...seed, id: normalizedId })
+      .select();
+
+    if (error) throw error;
+    return data?.[0] || seed;
+  } catch (err) {
+    console.warn("Supabase ensure category error:", err.message);
+    return null;
+  }
+};
+
 /**
  * DATABASE HELPER SERVICES
  * These methods query Supabase when connected, with graceful catch blocks.
@@ -111,9 +197,14 @@ export const productService = {
   async upsert(product) {
     if (!supabase) return null;
     try {
+      const productRecord = toSupabaseProduct(product);
+      if (productRecord.category) {
+        await ensureCategoryExists(productRecord.category);
+      }
+
       const { data, error } = await supabase
         .from("products")
-        .upsert(toSupabaseProduct(product))
+        .upsert(productRecord)
         .select();
       if (error) throw error;
       return data?.[0] ? fromSupabaseProduct(data[0]) : null;
