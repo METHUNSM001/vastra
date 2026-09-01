@@ -64,7 +64,7 @@ export const CategorySection = () => {
                 }}
               >
                 {/* Round Category Image */}
-                <div style={{ width: "100%", paddingTop: "100%", position: "relative", overflow: "hidden", backgroundColor: "#F5EFEB" }}>
+                <div style={{ width: "100%", paddingTop: "100%", position: "relative", overflow: "hidden", backgroundColor: "var(--bg-secondary)" }}>
                   <img
                     src={cat.image}
                     alt={name}

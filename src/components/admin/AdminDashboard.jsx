@@ -476,14 +476,6 @@ export const AdminDashboard = () => {
                   ))}
                 </tbody>
               </table>
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
         )}

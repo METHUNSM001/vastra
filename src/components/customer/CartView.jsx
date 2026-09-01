@@ -113,7 +113,7 @@ export const CartView = () => {
                     height: "105px",
                     objectFit: "cover",
                     borderRadius: "var(--radius-sm)",
-                    backgroundColor: "#F7EFEA"
+                    backgroundColor: "var(--bg-secondary)"
                   }}
                 />
 

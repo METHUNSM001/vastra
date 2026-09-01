@@ -80,7 +80,7 @@ export const ProductCard = ({ product, onQuickView }) => {
             width: "28px",
             height: "28px",
             borderRadius: "50%",
-            backgroundColor: "#FFFFFF",
+            backgroundColor: "var(--bg-card)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

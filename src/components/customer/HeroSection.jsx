@@ -29,7 +29,7 @@ export const HeroSection = () => {
             position: "relative",
             borderRadius: "var(--radius-lg)",
             overflow: "hidden",
-            backgroundColor: "#F6EEE9",
+            backgroundColor: "var(--bg-surface)",
             minHeight: "360px",
             display: "flex",
             alignItems: "center",
@@ -61,7 +61,7 @@ export const HeroSection = () => {
               left: 0,
               bottom: 0,
               right: 0,
-              background: "linear-gradient(90deg, #FAF8F5 0%, #FAF8F5 45%, rgba(250, 248, 245, 0.85) 60%, rgba(250, 248, 245, 0.2) 100%)"
+              background: "linear-gradient(90deg, var(--bg-surface) 0%, var(--bg-surface) 45%, var(--bg-secondary) 60%, var(--bg-subtle) 100%)"
             }}
             className="hero-gradient-overlay"
           />
@@ -103,7 +103,7 @@ export const HeroSection = () => {
                 fontSize: "clamp(1.5rem, 4.5vw, 3rem)",
                 lineHeight: 1.15,
                 fontWeight: "700",
-                color: "#000000",
+                color: "var(--text-main)",
                 marginBottom: "12px",
                 letterSpacing: "-0.01em",
                 textAlign: "left",
@@ -120,7 +120,7 @@ export const HeroSection = () => {
               style={{
                 fontSize: "0.95rem",
                 lineHeight: 1.5,
-                color: "#000000",
+                color: "var(--text-main)",
                 marginBottom: "18px",
                 maxWidth: "480px",
                 textAlign: "left"
@@ -160,14 +160,14 @@ export const HeroSection = () => {
             </div>
 
             {/* Dindigul Handcrafted Guarantee */}
-            <div className="flex items-center gap-6 hero-guarantee" style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid var(--border-light)", fontSize: "0.82rem", color: "#000000", display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-              <div className="flex items-center gap-2" style={{ color: "#000000", minWidth: 0 }}>
-                <Award size={16} color="#000000" />
-                <span style={{ color: "#000000" }}>{t.hero.features.dindigulHeritage}</span>
+            <div className="flex items-center gap-6 hero-guarantee" style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid var(--border-light)", fontSize: "0.82rem", color: "var(--text-main)", display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+              <div className="flex items-center gap-2" style={{ color: "var(--text-main)", minWidth: 0 }}>
+                <Award size={16} color="currentColor" />
+                <span style={{ color: "var(--text-main)" }}>{t.hero.features.dindigulHeritage}</span>
               </div>
-              <div className="flex items-center gap-2" style={{ color: "#000000", minWidth: 0 }}>
-                <ShieldCheck size={16} color="#000000" />
-                <span style={{ color: "#000000" }}>{t.hero.features.pureFabric}</span>
+              <div className="flex items-center gap-2" style={{ color: "var(--text-main)", minWidth: 0 }}>
+                <ShieldCheck size={16} color="currentColor" />
+                <span style={{ color: "var(--text-main)" }}>{t.hero.features.pureFabric}</span>
               </div>
             </div>
 

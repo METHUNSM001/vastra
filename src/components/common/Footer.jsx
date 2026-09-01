@@ -7,7 +7,7 @@ export const Footer = () => {
   const { lang, t, navigateTo, categories } = useApp();
 
   return (
-    <footer style={{ background: "linear-gradient(180deg, #1b1216 0%, #120d10 100%)", color: "#F7EBE8", marginTop: "60px", paddingTop: "50px", paddingBottom: "30px", borderTop: "3px solid var(--brand-secondary)" }}>
+    <footer style={{ background: "linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-subtle) 100%)", color: "var(--text-main)", marginTop: "60px", paddingTop: "50px", paddingBottom: "30px", borderTop: "3px solid var(--brand-secondary)" }}>
       
       {/* Value Proposition Highlights */}
       <div className="container" style={{ paddingBottom: "40px", borderBottom: "1px solid rgba(247, 235, 232, 0.12)" }}>
@@ -18,7 +18,7 @@ export const Footer = () => {
               <Truck size={24} />
             </div>
             <div>
-              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "#FFFFFF" }}>{lang === "ta" ? "இலவச விரைவு டெலிவரி" : "Fast Delivery"}</div>
+              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "இலவச விரைவு டெலிவரி" : "Fast Delivery"}</div>
               <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "₹999-க்கு மேல் இலவசம்" : "Free over ₹999 across TN"}</div>
             </div>
           </div>
@@ -28,7 +28,7 @@ export const Footer = () => {
               <ShieldCheck size={24} />
             </div>
             <div>
-              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "#FFFFFF" }}>{lang === "ta" ? "பாதுகாப்பான கட்டணம்" : "100% Razorpay Safe"}</div>
+              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "பாதுகாப்பான கட்டணம்" : "100% Razorpay Safe"}</div>
               <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "UPI, கார்டுகள் & NetBanking" : "UPI, Cards & NetBanking"}</div>
             </div>
           </div>
@@ -38,7 +38,7 @@ export const Footer = () => {
               <RefreshCw size={24} />
             </div>
             <div>
-              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "#FFFFFF" }}>{lang === "ta" ? "எளிதான மாற்று வசதி" : "7-Day Easy Exchange"}</div>
+              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "எளிதான மாற்று வசதி" : "7-Day Easy Exchange"}</div>
               <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "நிபந்தனையற்ற வாடிக்கையாளர் திருப்தி" : "Guaranteed fabric satisfaction"}</div>
             </div>
           </div>
@@ -48,7 +48,7 @@ export const Footer = () => {
               <MessageSquare size={24} />
             </div>
             <div>
-              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "#FFFFFF" }}>{lang === "ta" ? "வாட்ஸ்அப் ஆதரவு" : "WhatsApp Ordering"}</div>
+              <div style={{ fontWeight: "600", fontSize: "0.95rem", color: "var(--text-main)" }}>{lang === "ta" ? "வாட்ஸ்அப் ஆதரவு" : "WhatsApp Ordering"}</div>
               <div style={{ fontSize: "0.8rem", color: "rgba(247, 235, 232, 0.7)" }}>{lang === "ta" ? "திண்டுக்கல் நேரடி உதவி" : "+91 94884 12345"}</div>
             </div>
           </div>
@@ -64,7 +64,7 @@ export const Footer = () => {
           <div>
             <div className="flex items-center gap-2" style={{ marginBottom: "12px" }}>
               <span style={{ fontSize: "1.6rem" }}>🌸</span>
-              <span className="font-serif" style={{ fontSize: "1.6rem", fontWeight: "700", color: "#FFFFFF", letterSpacing: "0.02em" }}>
+              <span className="font-serif" style={{ fontSize: "1.6rem", fontWeight: "700", color: "var(--text-main)", letterSpacing: "0.02em" }}>
                 {lang === "ta" ? "வஸ்த்ர லக்ஷ்ணம்" : "Vastra Lakshnam"}
               </span>
             </div>
@@ -122,7 +122,7 @@ export const Footer = () => {
 
           {/* Col 2: Quick Links */}
           <div>
-            <h4 style={{ color: "#FFFFFF", fontSize: "1.05rem", marginBottom: "18px", letterSpacing: "0.02em" }}>
+            <h4 style={{ color: "var(--text-main)", fontSize: "1.05rem", marginBottom: "18px", letterSpacing: "0.02em" }}>
               {t.footer.quickLinks}
             </h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
@@ -156,7 +156,7 @@ export const Footer = () => {
 
           {/* Col 3: Categories */}
           <div>
-            <h4 style={{ color: "#FFFFFF", fontSize: "1.05rem", marginBottom: "18px", letterSpacing: "0.02em" }}>
+            <h4 style={{ color: "var(--text-main)", fontSize: "1.05rem", marginBottom: "18px", letterSpacing: "0.02em" }}>
               {t.footer.categories}
             </h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
@@ -175,7 +175,7 @@ export const Footer = () => {
 
           {/* Col 4: Dindigul Store Location & Support */}
           <div>
-            <h4 style={{ color: "#FFFFFF", fontSize: "1.05rem", marginBottom: "18px", letterSpacing: "0.02em" }}>
+            <h4 style={{ color: "var(--text-main)", fontSize: "1.05rem", marginBottom: "18px", letterSpacing: "0.02em" }}>
               {t.footer.contactUs}
             </h4>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "0.88rem", color: "rgba(247, 235, 232, 0.75)" }}>

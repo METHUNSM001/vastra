@@ -122,7 +122,7 @@ export const ProductDetailView = () => {
               paddingTop: "120%",
               borderRadius: "var(--radius-lg)",
               overflow: "hidden",
-              backgroundColor: "#F7EFEA",
+              backgroundColor: "var(--bg-secondary)",
               border: "1px solid var(--border-light)",
               boxShadow: "var(--shadow-md)"
             }}

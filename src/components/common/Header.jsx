@@ -92,7 +92,7 @@ export const Header = () => {
         className="announcement-bar" 
         style={{ 
           backgroundColor: "var(--brand-primary)", 
-          color: "#FFFFFF", 
+          color: "var(--text-light)", 
           padding: "6px 16px", 
           fontSize: "0.82rem", 
           fontWeight: "500", 
