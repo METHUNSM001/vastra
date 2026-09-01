@@ -23,9 +23,9 @@
   --brand-blush: #f8d7e6;
   
   /* Text & Neutral Hierarchy */
-  --text-main: #2a1721;
-  --text-secondary: #5d4652;
-  --text-muted: #866579;
+  --text-main: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
   --text-light: #fff9fb;
   --text-accent: #d94f86;
 
@@ -81,9 +81,9 @@
   --bg-subtle: #0f0c0f;
   --bg-blush: #27151d;
   --bg-card: #141114;
-  --text-main: #fff3f9;
-  --text-secondary: #f0d2e3;
-  --text-muted: #d7a4c1;
+  --text-main: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
   --text-light: #0d0a0d;
   --text-accent: #ff7bb0;
   --border-light: #2e1c26;
