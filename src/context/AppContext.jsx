@@ -12,6 +12,7 @@ import {
 } from "../services/supabase";
 import { fromSupabaseCategory } from "../services/supabase";
 import { resolveRemoteCollection } from "./dataLoadStrategy";
+import { authenticateAdminBiometric as verifyAdminBiometric, hasAdminBiometric, registerAdminBiometric } from "../services/adminBiometric";
 
 const AppContext = createContext();
 
@@ -419,21 +420,42 @@ export const AppProvider = ({ children }) => {
 
   // Admin Auth State
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-    return localStorage.getItem("vl_admin_auth") === "true";
+    return sessionStorage.getItem("vl_admin_auth") === "true";
+  });
+  const [isAdminPasswordVerified, setIsAdminPasswordVerified] = useState(() => {
+    return sessionStorage.getItem("vl_admin_password_verified") === "true";
   });
 
   const loginAdmin = (password) => {
     if (password === "vastra2026" || password === "admin") {
-      setIsAdminLoggedIn(true);
-      localStorage.setItem("vl_admin_auth", "true");
+      setIsAdminPasswordVerified(true);
+      sessionStorage.setItem("vl_admin_password_verified", "true");
       return true;
     }
     return false;
   };
 
+  const authenticateAdminBiometric = async () => {
+    const result = await verifyAdminBiometric();
+    if (result.success) {
+      setIsAdminLoggedIn(true);
+      sessionStorage.setItem("vl_admin_auth", "true");
+    }
+    return result;
+  };
+
+  const enrollAdminBiometric = async () => {
+    if (!isAdminPasswordVerified) {
+      return { success: false, message: "Enter the admin password first." };
+    }
+    return registerAdminBiometric();
+  };
+
   const logoutAdmin = () => {
     setIsAdminLoggedIn(false);
-    localStorage.removeItem("vl_admin_auth");
+    setIsAdminPasswordVerified(false);
+    sessionStorage.removeItem("vl_admin_auth");
+    sessionStorage.removeItem("vl_admin_password_verified");
   };
 
   // 7. Cart Actions
@@ -696,7 +718,11 @@ export const AppProvider = ({ children }) => {
         resetUserPassword,
         registeredUsers,
         isAdminLoggedIn,
+        isAdminPasswordVerified,
         loginAdmin,
+        authenticateAdminBiometric,
+        enrollAdminBiometric,
+        hasAdminBiometric,
         logoutAdmin,
         isBackendConnected,
         isDataLoaded,

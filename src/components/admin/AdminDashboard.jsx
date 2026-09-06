@@ -19,7 +19,8 @@ import {
   ArrowLeft,
   Search,
   Filter,
-  DollarSign
+  DollarSign,
+  Fingerprint
 } from "lucide-react";
 import { generateInvoicePDF } from "../../services/invoiceGenerator";
 import { normalizeCategorySlug } from "../../services/supabase";
@@ -29,7 +30,11 @@ export const AdminDashboard = () => {
     lang, 
     t, 
     isAdminLoggedIn, 
+    isAdminPasswordVerified,
     loginAdmin, 
+    authenticateAdminBiometric,
+    enrollAdminBiometric,
+    hasAdminBiometric,
     logoutAdmin, 
     products, 
     setProducts, 
@@ -49,6 +54,7 @@ export const AdminDashboard = () => {
 
   const [passwordInput, setPasswordInput] = useState("");
   const [authError, setAuthError] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
   const [activeAdminTab, setActiveAdminTab] = useState("dashboard");
 
   // Product Add/Edit Modal
@@ -78,10 +84,29 @@ export const AdminDashboard = () => {
   const pendingOrdersCount = orders.filter((o) => o.status === "confirmed" || o.status === "processing").length;
   const lowStockCount = products.filter((p) => p.stock <= 5).length;
 
-  const handleAdminLogin = (e) => {
+  const handleBiometricLogin = async () => {
+    setAuthBusy(true);
+    const result = await authenticateAdminBiometric();
+    setAuthBusy(false);
+    if (!result.success) setAuthError(result.message);
+  };
+
+  const handleEnrollBiometric = async () => {
+    setAuthBusy(true);
+    const result = await enrollAdminBiometric();
+    setAuthBusy(false);
+    if (!result.success) {
+      setAuthError(result.message);
+      return;
+    }
+    await handleBiometricLogin();
+  };
+
+  const handleAdminLogin = async (e) => {
     e.preventDefault();
     if (loginAdmin(passwordInput)) {
       setAuthError("");
+      if (hasAdminBiometric()) await handleBiometricLogin();
     } else {
       setAuthError("Incorrect password. Please try again.");
     }
@@ -195,27 +220,47 @@ export const AdminDashboard = () => {
             Vastra Lakshnam Admin
           </h2>
           <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "24px" }}>
-            Enter your administrative password to manage boutique inventory and orders.
+            Enter the admin password, then verify with this device&apos;s fingerprint or biometric lock.
           </p>
 
-          <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <input
-              type="password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              placeholder="Admin Password (e.g. admin)"
-              required
-              style={{ width: "100%", textAlign: "center", fontSize: "1rem", letterSpacing: "0.1em" }}
-            />
+          {!isAdminPasswordVerified ? (
+            <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                placeholder="Admin Password"
+                required
+                style={{ width: "100%", textAlign: "center", fontSize: "1rem", letterSpacing: "0.1em" }}
+              />
 
-            {authError && (
-              <div style={{ color: "#DC2626", fontSize: "0.8rem" }}>{authError}</div>
-            )}
+              {authError && (
+                <div style={{ color: "#DC2626", fontSize: "0.8rem" }}>{authError}</div>
+              )}
 
-            <button type="submit" className="btn-primary" style={{ width: "100%" }}>
-              Access Admin Hub
-            </button>
-          </form>
+              <button type="submit" className="btn-primary" style={{ width: "100%" }} disabled={authBusy}>
+                Verify Password
+              </button>
+            </form>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              {authError && (
+                <div style={{ color: "#DC2626", fontSize: "0.8rem" }}>{authError}</div>
+              )}
+
+              {hasAdminBiometric() ? (
+                <button type="button" className="btn-primary" style={{ width: "100%", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px" }} onClick={handleBiometricLogin} disabled={authBusy}>
+                  <Fingerprint size={18} />
+                  Verify Fingerprint
+                </button>
+              ) : (
+                <button type="button" className="btn-primary" style={{ width: "100%", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px" }} onClick={handleEnrollBiometric} disabled={authBusy}>
+                  <Fingerprint size={18} />
+                  Register Fingerprint
+                </button>
+              )}
+            </div>
+          )}
 
           <button 
             onClick={() => navigateTo("home")}
