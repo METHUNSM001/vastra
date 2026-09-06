@@ -12,8 +12,6 @@ import {
   PhoneCall,
   Sparkles,
   ChevronRight,
-  Sun,
-  Moon
 } from "lucide-react";
 import { getWhatsAppUrl } from "../../services/razorpay";
 
@@ -22,8 +20,6 @@ export const Header = () => {
     lang, 
     t, 
     toggleLanguage, 
-    theme,
-    toggleTheme,
     cart, 
     wishlist, 
     navigateTo, 
@@ -249,27 +245,6 @@ export const Header = () => {
           {/* Right Actions: Language Switcher, Wishlist, Account, Cart */}
           <div className="flex items-center gap-2 header-actions" style={{ justifyContent: "flex-end", flexWrap: "nowrap" }}>
 
-            <button
-              onClick={toggleTheme}
-              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-              title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "36px",
-                height: "36px",
-                padding: "6px",
-                borderRadius: "50%",
-                border: "1px solid var(--border-medium)",
-                backgroundColor: "var(--bg-secondary)",
-                color: "var(--text-main)",
-                cursor: "pointer"
-              }}
-            >
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-            
             {/* Language Switcher Pill - Hidden on Mobile */}
             <button
               onClick={() => toggleLanguage()}
@@ -478,7 +453,7 @@ export const Header = () => {
             position: "fixed",
             inset: 0,
             zIndex: 1000,
-            backgroundColor: theme === "dark" ? "rgba(15, 8, 11, 0.52)" : "rgba(0, 0, 0, 0.3)",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
             display: "flex",
             alignItems: "stretch"
           }}
@@ -489,18 +464,18 @@ export const Header = () => {
             style={{
               width: "min(82vw, 320px)",
               height: "100%",
-              background: theme === "dark" ? "linear-gradient(180deg, #120d10 0%, #1b1218 100%)" : "linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)",
+              background: "linear-gradient(180deg, #fff7fa 0%, #ffffff 100%)",
               padding: "24px 20px",
               overflowY: "auto",
               boxShadow: "0 20px 40px rgba(0,0,0,0.45)",
               display: "flex",
               flexDirection: "column",
-              borderRight: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "var(--border-light)"}`,
+              borderRight: "1px solid var(--border-light)",
               transform: "translateX(0)"
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between" style={{ marginBottom: "24px", paddingBottom: "16px", borderBottom: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "var(--border-light)"}` }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: "24px", paddingBottom: "16px", borderBottom: "1px solid var(--border-light)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <img src="/logo.png" alt="Logo" style={{ height: "30px", width: "auto", borderRadius: "4px" }} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/100x100/9E3D52/FFF?text=VL" }} />
                 <span className="font-serif" style={{ fontSize: "1.3rem", fontWeight: "700", color: "var(--text-main)" }}>Menu</span>
@@ -515,14 +490,14 @@ export const Header = () => {
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
                 <button
                   onClick={() => { setIsMobileMenuOpen(false); navigateTo(currentUser ? "account" : "auth"); }}
-                  style={{ flex: 1, padding: "10px", borderRadius: "var(--radius-sm)", backgroundColor: theme === "dark" ? "#f6d3df" : "var(--bg-blush)", color: theme === "dark" ? "#171114" : "var(--text-main)", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", border: `1px solid ${theme === "dark" ? "rgba(255, 126, 175, 0.7)" : "var(--border-medium)"}` }}
+                  style={{ flex: 1, padding: "10px", borderRadius: "var(--radius-sm)", backgroundColor: "var(--bg-blush)", color: "var(--text-main)", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", border: "1px solid var(--border-medium)" }}
                 >
                   <User size={18} />
                   <span style={{ fontSize: "0.85rem" }}>{currentUser ? (currentUser.name ? currentUser.name.split(" ")[0] : "Account") : (lang === "ta" ? "உள்நுழைக" : "Sign In")}</span>
                 </button>
                 <button
                   onClick={() => toggleLanguage()}
-                  style={{ padding: "10px 12px", borderRadius: "var(--radius-sm)", border: `1px solid ${theme === "dark" ? "rgba(255, 126, 175, 0.7)" : "var(--border-medium)"}`, backgroundColor: theme === "dark" ? "#1b1317" : "var(--bg-secondary)", color: "var(--text-main)", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}
+                  style={{ padding: "10px 12px", borderRadius: "var(--radius-sm)", border: "1px solid var(--border-medium)", backgroundColor: "var(--bg-secondary)", color: "var(--text-main)", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}
                 >
                   <Globe size={18} color="var(--brand-primary)" />
                   <span style={{ fontSize: "0.85rem" }}>{lang === "en" ? "தமிழ்" : "EN"}</span>
@@ -548,7 +523,7 @@ export const Header = () => {
                   href={getWhatsAppUrl("Hi Vastra Lakshnam! Need help.")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px", backgroundColor: theme === "dark" ? "#f8d5e3" : "var(--bg-blush)", color: theme === "dark" ? "#171114" : "var(--text-main)", borderRadius: "var(--radius-sm)", fontWeight: "700", border: `1px solid ${theme === "dark" ? "rgba(255, 126, 175, 0.5)" : "var(--border-medium)"}` }}
+                  style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px", backgroundColor: "var(--bg-blush)", color: "var(--text-main)", borderRadius: "var(--radius-sm)", fontWeight: "700", border: "1px solid var(--border-medium)" }}
                 >
                   <PhoneCall size={18} />
                   <span>{lang === "ta" ? "வாட்ஸ்அப் உதவி" : "WhatsApp Support"}</span>

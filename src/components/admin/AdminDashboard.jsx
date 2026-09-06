@@ -28,7 +28,6 @@ export const AdminDashboard = () => {
   const { 
     lang, 
     t, 
-    theme,
     isAdminLoggedIn, 
     loginAdmin, 
     logoutAdmin, 
@@ -230,20 +229,20 @@ export const AdminDashboard = () => {
   }
 
   // MAIN ADMIN DASHBOARD
-  const adminBg = theme === "dark" ? "#0F0A0D" : "#F7F5F2";
-  const adminTextMain = theme === "dark" ? "#FFFFFF" : "#1A1A1A";
-  const adminTextSecondary = theme === "dark" ? "#D1D5DB" : "#666666";
-  const adminCardBg = theme === "dark" ? "#1A1515" : "#FFFFFF";
-  const adminBorder = theme === "dark" ? "#2D2525" : "var(--border-light)";
-  const adminHeaderBg = theme === "dark" ? "#20171B" : "#F0F0F0";
-  const adminTableHeaderBg = theme === "dark" ? "#2D2525" : "#F3F4F6";
-  const adminTableHeaderText = theme === "dark" ? "#FFFFFF" : "#1F2937";
+  const adminBg = "#F7F5F2";
+  const adminTextMain = "#1A1A1A";
+  const adminTextSecondary = "#666666";
+  const adminCardBg = "#FFFFFF";
+  const adminBorder = "var(--border-light)";
+  const adminHeaderBg = "#F0F0F0";
+  const adminTableHeaderBg = "#F3F4F6";
+  const adminTableHeaderText = "#1F2937";
 
   return (
     <div style={{ backgroundColor: adminBg, minHeight: "100vh", paddingBottom: "60px" }}>
       
       {/* Admin Top Header */}
-      <div style={{ backgroundColor: theme === "dark" ? "#20171B" : "#F0F0F0", color: theme === "dark" ? "#FFFFFF" : adminTextMain, padding: "16px 24px", borderBottom: "2px solid var(--brand-secondary)" }}>
+      <div style={{ backgroundColor: "#F0F0F0", color: adminTextMain, padding: "16px 24px", borderBottom: "2px solid var(--brand-secondary)" }}>
         <div className="container-wide flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span style={{ fontSize: "1.4rem" }}>🌸</span>
@@ -470,7 +469,7 @@ export const AdminDashboard = () => {
                       </td>
                       <td style={{ padding: "12px 16px" }}>
                         <div className="flex gap-3" style={{ display: "flex", gap: "12px" }}>
-                          <button onClick={() => handleOpenProductModal(prod)} style={{ background: "none", color: "var(--brand-primary)", padding: "6px 8px", cursor: "pointer", borderRadius: "4px", transition: "background 0.2s", display: "inline-flex", alignItems: "center" }} onMouseEnter={(e) => e.target.style.backgroundColor = theme === "dark" ? "rgba(236,72,153,0.1)" : "rgba(236,72,153,0.1)"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>
+                          <button onClick={() => handleOpenProductModal(prod)} style={{ background: "none", color: "var(--brand-primary)", padding: "6px 8px", cursor: "pointer", borderRadius: "4px", transition: "background 0.2s", display: "inline-flex", alignItems: "center" }} onMouseEnter={(e) => e.target.style.backgroundColor = "rgba(236,72,153,0.1)"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>
                             <Edit size={18} />
                           </button>
                           <button onClick={() => handleDeleteProduct(prod.id)} style={{ background: "none", color: "#DC2626", padding: "6px 8px", cursor: "pointer", borderRadius: "4px", transition: "background 0.2s", display: "inline-flex", alignItems: "center", fontSize: "1rem" }} onMouseEnter={(e) => e.target.style.backgroundColor = "rgba(220,38,38,0.1)"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"} title="Delete Product">
@@ -657,12 +656,12 @@ export const AdminDashboard = () => {
             <form onSubmit={handleSaveProduct} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               <div>
                 <label style={{ fontSize: "0.85rem", fontWeight: "600", display: "block", marginBottom: "4px", color: adminTextMain }}>English Name *</label>
-                <input type="text" required value={pNameEn} onChange={(e) => setPNameEn(e.target.value)} style={{ width: "100%", backgroundColor: theme === "dark" ? "#2D2525" : "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
+                <input type="text" required value={pNameEn} onChange={(e) => setPNameEn(e.target.value)} style={{ width: "100%", backgroundColor: "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
               </div>
 
               <div>
                 <label style={{ fontSize: "0.85rem", fontWeight: "600", display: "block", marginBottom: "4px", color: adminTextMain }}>Tamil Name (தமிழ்)</label>
-                <input type="text" value={pNameTa} onChange={(e) => setPNameTa(e.target.value)} style={{ width: "100%", backgroundColor: theme === "dark" ? "#2D2525" : "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
+                <input type="text" value={pNameTa} onChange={(e) => setPNameTa(e.target.value)} style={{ width: "100%", backgroundColor: "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
@@ -723,15 +722,15 @@ export const AdminDashboard = () => {
             <form onSubmit={handleCreateCoupon} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div>
                 <label style={{ fontSize: "0.85rem", fontWeight: "600", display: "block", marginBottom: "4px", color: adminTextMain }}>Coupon Code</label>
-                <input type="text" required value={cCode} onChange={(e) => setCCode(e.target.value)} placeholder="e.g. FESTIVE20" style={{ width: "100%", textTransform: "uppercase", backgroundColor: theme === "dark" ? "#2D2525" : "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
+                <input type="text" required value={cCode} onChange={(e) => setCCode(e.target.value)} placeholder="e.g. FESTIVE20" style={{ width: "100%", textTransform: "uppercase", backgroundColor: "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
               </div>
               <div>
                 <label style={{ fontSize: "0.85rem", fontWeight: "600", display: "block", marginBottom: "4px", color: adminTextMain }}>Discount Percentage (%)</label>
-                <input type="number" required value={cPercent} onChange={(e) => setCPercent(e.target.value)} style={{ width: "100%", backgroundColor: theme === "dark" ? "#2D2525" : "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
+                <input type="number" required value={cPercent} onChange={(e) => setCPercent(e.target.value)} style={{ width: "100%", backgroundColor: "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
               </div>
               <div>
                 <label style={{ fontSize: "0.85rem", fontWeight: "600", display: "block", marginBottom: "4px", color: adminTextMain }}>Minimum Order Value (₹)</label>
-                <input type="number" required value={cMinOrder} onChange={(e) => setCMinOrder(e.target.value)} style={{ width: "100%", backgroundColor: theme === "dark" ? "#2D2525" : "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
+                <input type="number" required value={cMinOrder} onChange={(e) => setCMinOrder(e.target.value)} style={{ width: "100%", backgroundColor: "#F5F5F5", color: adminTextMain, padding: "8px 12px", borderRadius: "4px", border: `1px solid ${adminBorder}` }} />
               </div>
               <div className="flex justify-between" style={{ marginTop: "12px" }}>
                 <button type="button" onClick={() => setShowCouponModal(false)} className="btn-secondary">Cancel</button>

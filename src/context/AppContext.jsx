@@ -23,20 +23,7 @@ export const AppProvider = ({ children }) => {
 
   const t = translations[lang] || translations.en;
 
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem("vl_theme");
-    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
-    return "dark";
-  });
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("vl_theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((currentTheme) => currentTheme === "light" ? "dark" : "light");
-  };
+  const theme = "light";
 
   const toggleLanguage = (selectedLang) => {
     const newLang = selectedLang || (lang === "en" ? "ta" : "en");
@@ -701,7 +688,6 @@ export const AppProvider = ({ children }) => {
         t,
         toggleLanguage,
         theme,
-        toggleTheme,
         currentView,
         navigateTo,
         selectedCategoryFilter,
