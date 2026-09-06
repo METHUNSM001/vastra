@@ -204,7 +204,12 @@ export const HeroSection = () => {
             padding: 18px 0 20px !important;
           }
           .hero-bg-image { width: 100% !important; opacity: 0.22; }
-          .hero-gradient-overlay { background: linear-gradient(180deg, rgba(7, 9, 13, 0.9) 0%, rgba(7, 9, 13, 0.86) 68%, rgba(7, 9, 13, 0.92) 100%) !important; }
+          .hero-gradient-overlay { background: linear-gradient(180deg, rgba(255, 247, 250, 0.96) 0%, rgba(255, 247, 250, 0.92) 68%, rgba(255, 247, 250, 0.9) 100%) !important; }
+          .hero-content h1,
+          .hero-content > p,
+          .hero-guarantee,
+          .hero-guarantee div,
+          .hero-guarantee span { color: #21141b !important; }
           .hero-content {
             width: 100% !important;
             max-width: 100% !important;
