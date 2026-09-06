@@ -76,7 +76,8 @@ export const toSupabaseProduct = (product) => ({
   origin: product.origin || "Dindigul, Tamil Nadu",
   colors: product.colors || [],
   sizes: product.sizes || [],
-  images: product.images || []
+  images: product.images || [],
+  is_active: product.isActive ?? product.is_active ?? true
 });
 
 export const fromSupabaseCategory = (category) => ({
@@ -217,12 +218,13 @@ export const productService = {
   async delete(id) {
     if (!supabase) return null;
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("products")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .select("id");
       if (error) throw error;
-      return true;
+      return Array.isArray(data) && data.some((product) => product.id === id);
     } catch (err) {
       console.warn("Supabase delete product error:", err.message);
       return false;

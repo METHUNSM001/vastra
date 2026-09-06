@@ -39,8 +39,12 @@ CREATE TABLE IF NOT EXISTS public.products (
     colors JSONB DEFAULT '[]'::JSONB,
     sizes JSONB DEFAULT '[]'::JSONB,
     images JSONB DEFAULT '[]'::JSONB,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE public.products
+    ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
 
 -- 3. ORDERS TABLE
 CREATE TABLE IF NOT EXISTS public.orders (

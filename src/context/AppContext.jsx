@@ -11,7 +11,7 @@ import {
   authService 
 } from "../services/supabase";
 import { fromSupabaseCategory } from "../services/supabase";
-import { resolveRemoteCollection, filterVisibleProducts } from "./dataLoadStrategy";
+import { resolveRemoteCollection } from "./dataLoadStrategy";
 
 const AppContext = createContext();
 
@@ -48,23 +48,6 @@ export const AppProvider = ({ children }) => {
   const [banners, setBanners] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [hiddenProductIds, setHiddenProductIds] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("vl_hidden_products") || "[]");
-      return new Set(Array.isArray(saved) ? saved : []);
-    } catch (err) {
-      return new Set();
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem("vl_hidden_products", JSON.stringify([...hiddenProductIds]));
-  }, [hiddenProductIds]);
-
-  useEffect(() => {
-    if (!isDataLoaded) return;
-    setProducts((prevProducts) => filterVisibleProducts(prevProducts, hiddenProductIds));
-  }, [hiddenProductIds, isDataLoaded]);
 
   // Supabase Backend Sync State
   const [isBackendConnected, setIsBackendConnected] = useState(() => isSupabaseConfigured());
@@ -82,8 +65,8 @@ export const AppProvider = ({ children }) => {
             orderService.getAll()
           ]);
 
-          // Load from Supabase if data exists, otherwise use initial data
-          setProducts(filterVisibleProducts(resolveRemoteCollection(remoteProducts, initialProducts), hiddenProductIds));
+          // Supabase is authoritative when configured, including an intentionally empty catalog.
+          setProducts(remoteProducts || []);
 
           const resolvedCategories = resolveRemoteCollection(remoteCategories, initialCategories);
           setCategories(resolvedCategories?.map ? resolvedCategories.map(fromSupabaseCategory) : initialCategories);
@@ -108,7 +91,7 @@ export const AppProvider = ({ children }) => {
         }
       } catch (err) {
         console.warn("⚠️ Error loading data, using initial data:", err);
-        setProducts(filterVisibleProducts(initialProducts, hiddenProductIds));
+        setProducts([]);
         setCategories(initialCategories);
         setCoupons(initialCoupons);
         setBanners(initialBanners);
@@ -127,8 +110,8 @@ export const AppProvider = ({ children }) => {
 
     const refreshProducts = async () => {
       const remoteProducts = await productService.getAll();
-      if (remoteProducts) {
-        setProducts(filterVisibleProducts(remoteProducts, hiddenProductIds));
+      if (remoteProducts !== null) {
+        setProducts(remoteProducts);
         console.info("📡 Products updated from Supabase (real-time sync)");
       }
     };
@@ -180,7 +163,7 @@ export const AppProvider = ({ children }) => {
         couponService.getAll(),
         orderService.getAll()
       ]).then(([remoteProducts, remoteCategories, remoteCoupons, remoteOrders]) => {
-        if (remoteProducts) setProducts(filterVisibleProducts(remoteProducts, hiddenProductIds));
+        if (remoteProducts !== null) setProducts(remoteProducts);
         if (remoteCategories) setCategories(remoteCategories.map(fromSupabaseCategory));
         if (remoteCoupons) setCoupons(remoteCoupons);
         if (remoteOrders) setOrders(remoteOrders);
@@ -191,7 +174,7 @@ export const AppProvider = ({ children }) => {
       supabase.removeChannel(channel);
       clearInterval(pollInterval);
     };
-  }, [isDataLoaded, hiddenProductIds]);
+  }, [isDataLoaded]);
 
   // 4. Cart & Wishlist State
   const [cart, setCart] = useState(() => {
@@ -520,22 +503,11 @@ export const AppProvider = ({ children }) => {
         const savedProduct = await productService.upsert(product);
         if (!savedProduct) return { success: false, message: "Could not save product to the shared catalog." };
 
-        setHiddenProductIds((prev) => {
-          const next = new Set(prev);
-          next.delete(savedProduct.id);
-          return next;
-        });
-
         setProducts((prev) => [savedProduct, ...prev.filter((item) => item.id !== savedProduct.id)]);
         console.info("✅ Product saved and synced to all devices:", savedProduct.id);
         return { success: true, product: savedProduct };
       }
 
-      setHiddenProductIds((prev) => {
-        const next = new Set(prev);
-        next.delete(product.id);
-        return next;
-      });
       setProducts((prev) => [product, ...prev.filter((item) => item.id !== product.id)]);
       console.warn("⚠️ Supabase not configured - saving locally only");
       return { success: true, product };
@@ -547,22 +519,15 @@ export const AppProvider = ({ children }) => {
 
   const deleteProduct = async (productId) => {
     try {
-      setHiddenProductIds((prev) => {
-        const next = new Set(prev);
-        next.add(productId);
-        return next;
-      });
-      setProducts((prev) => prev.filter((product) => product.id !== productId));
-
       if (isSupabaseConfigured() && supabase) {
         const deleted = await productService.delete(productId);
         if (!deleted) {
-          console.warn("Supabase delete did not confirm; keeping product hidden locally to prevent reappearance.");
-        } else {
-          console.info("✅ Product deleted and synced to all devices");
+          return { success: false, message: "Could not remove product from the shared catalog." };
         }
       }
 
+      setProducts((prev) => prev.filter((product) => product.id !== productId));
+      console.info("✅ Product deleted and synced to all devices");
       return { success: true };
     } catch (err) {
       console.error("Delete product error:", err);
