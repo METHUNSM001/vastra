@@ -60,6 +60,7 @@ export const AppProvider = ({ children }) => {
   const [coupons, setCoupons] = useState([]);
   const [banners, setBanners] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [hiddenProductIds, setHiddenProductIds] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("vl_hidden_products") || "[]");
@@ -77,9 +78,6 @@ export const AppProvider = ({ children }) => {
     if (!isDataLoaded) return;
     setProducts((prevProducts) => filterVisibleProducts(prevProducts, hiddenProductIds));
   }, [hiddenProductIds, isDataLoaded]);
-
-  // Track if initial Supabase sync is complete
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   // Supabase Backend Sync State
   const [isBackendConnected, setIsBackendConnected] = useState(() => isSupabaseConfigured());
